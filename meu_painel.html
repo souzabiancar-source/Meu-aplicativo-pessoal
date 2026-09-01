@@ -1,0 +1,771 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Meu painel</title>
+<meta name="theme-color" content="#F2F4F1">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,800&family=Karla:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --fundo:#F2F4F1;
+    --papel:#FFFFFF;
+    --tinta:#1D2B2A;
+    --tintaFraca:#5F706C;
+    --linha:#DDE3DE;
+    --salvia:#3F6B5E;
+    --ameixa:#8E5572;
+    --ouro:#9C7A22;
+    --alerta:#A33B2A;
+    --raio:12px;
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--fundo);
+    color:var(--tinta);
+    font-family:"Karla",system-ui,sans-serif;
+    font-size:16px;
+    line-height:1.5;
+    padding:0 0 96px;
+  }
+  .envelope{max-width:640px;margin:0 auto;padding:0 18px}
+
+  /* Cabecalho */
+  header{padding:26px 0 14px}
+  .diaHoje{font-size:13px;letter-spacing:.02em;color:var(--tintaFraca)}
+  .marca{
+    font-family:"Bricolage Grotesque",serif;
+    font-weight:800;
+    font-size:30px;
+    line-height:1.05;
+    margin:2px 0 0;
+  }
+
+  /* Foco */
+  .foco{
+    background:var(--tinta);
+    color:#EFF3EF;
+    border-radius:var(--raio);
+    padding:22px 20px;
+    margin:6px 0 22px;
+    animation:surgir .5s ease-out both;
+  }
+  @keyframes surgir{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.foco{animation:none}}
+  .focoRotulo{font-size:12px;letter-spacing:.08em;color:#9DB3AB;margin:0 0 6px}
+  .focoTitulo{
+    font-family:"Bricolage Grotesque",serif;
+    font-weight:600;
+    font-size:26px;
+    line-height:1.15;
+    margin:0;
+  }
+  .focoMeta{font-size:14px;color:#A9C0B7;margin:8px 0 0}
+  .focoResumo{
+    display:flex;flex-wrap:wrap;gap:18px;
+    margin:18px 0 0;padding:14px 0 0;
+    border-top:1px solid rgba(255,255,255,.16);
+    font-size:14px;color:#C3D4CD;
+  }
+  .focoResumo b{display:block;font-size:19px;font-weight:700;color:#EFF3EF}
+
+  /* Abas */
+  nav.abas{display:flex;gap:6px;margin:0 0 18px}
+  nav.abas button{
+    flex:1;border:1px solid var(--linha);background:transparent;
+    color:var(--tintaFraca);font-family:inherit;font-size:14px;font-weight:700;
+    padding:10px 6px;border-radius:999px;cursor:pointer;
+  }
+  nav.abas button[aria-selected="true"]{background:var(--tinta);border-color:var(--tinta);color:#fff}
+  nav.abas button:focus-visible,
+  button:focus-visible,input:focus-visible,select:focus-visible,textarea:focus-visible,summary:focus-visible{
+    outline:3px solid var(--salvia);outline-offset:2px
+  }
+
+  section[hidden]{display:none}
+  h2.tituloSecao{
+    font-family:"Bricolage Grotesque",serif;font-weight:600;font-size:20px;
+    margin:26px 0 10px;
+  }
+  h2.tituloSecao:first-child{margin-top:0}
+
+  /* Formularios */
+  details.form{
+    background:var(--papel);border:1px solid var(--linha);
+    border-radius:var(--raio);padding:0;margin:0 0 18px;
+  }
+  details.form>summary{
+    padding:13px 16px;cursor:pointer;font-weight:700;font-size:15px;list-style:none;
+  }
+  details.form>summary::-webkit-details-marker{display:none}
+  details.form>summary::before{content:"+ ";color:var(--salvia);font-weight:800}
+  details.form[open]>summary::before{content:"\00d7 ";}
+  .campos{padding:0 16px 16px;display:grid;gap:10px}
+  .dupla{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+  label{display:block;font-size:13px;color:var(--tintaFraca);margin:0 0 4px}
+  input,select,textarea{
+    width:100%;font-family:inherit;font-size:15px;color:var(--tinta);
+    background:var(--fundo);border:1px solid var(--linha);border-radius:8px;
+    padding:9px 10px;
+  }
+  textarea{min-height:60px;resize:vertical}
+  .botao{
+    background:var(--salvia);color:#fff;border:none;border-radius:999px;
+    font-family:inherit;font-size:15px;font-weight:700;padding:11px 18px;cursor:pointer;
+  }
+  .botaoVazio{
+    background:transparent;color:var(--tintaFraca);border:1px solid var(--linha);
+    border-radius:999px;font-family:inherit;font-size:13px;padding:7px 14px;cursor:pointer;
+  }
+
+  /* Cartoes de lista */
+  .item{
+    background:var(--papel);border:1px solid var(--linha);border-left:4px solid var(--linha);
+    border-radius:var(--raio);padding:13px 15px;margin:0 0 9px;
+    display:flex;gap:12px;align-items:flex-start;
+  }
+  .item.alta{border-left-color:var(--alerta)}
+  .item.media{border-left-color:var(--ouro)}
+  .item.baixa{border-left-color:var(--salvia)}
+  .item.consulta{border-left-color:var(--ameixa)}
+  .item.exame{border-left-color:var(--salvia)}
+  .item.compromisso{border-left-color:var(--tinta)}
+  .item.entrada{border-left-color:var(--salvia)}
+  .item.saida{border-left-color:var(--alerta)}
+  .item.feito{opacity:.5}
+  .item.feito .itemTitulo{text-decoration:line-through}
+  .itemCorpo{flex:1;min-width:0}
+  .itemTitulo{font-weight:700;font-size:16px;margin:0}
+  .itemDetalhe{font-size:13.5px;color:var(--tintaFraca);margin:3px 0 0}
+  .itemValor{font-weight:700;font-size:16px;white-space:nowrap}
+  .marcador{
+    appearance:none;width:22px;height:22px;flex:none;margin:1px 0 0;
+    border:2px solid var(--linha);border-radius:6px;background:var(--papel);cursor:pointer;
+  }
+  .marcador:checked{background:var(--salvia);border-color:var(--salvia)}
+  .apagar{
+    background:none;border:none;color:var(--tintaFraca);font-size:19px;line-height:1;
+    cursor:pointer;padding:2px 4px;
+  }
+  .hoje{background:#FBF6E8}
+  .vazio{
+    border:1px dashed var(--linha);border-radius:var(--raio);
+    padding:20px 16px;color:var(--tintaFraca);font-size:14.5px;
+  }
+  .barra{height:6px;background:var(--linha);border-radius:999px;overflow:hidden;margin:9px 0 0}
+  .barra span{display:block;height:100%;background:var(--salvia)}
+  .agrupador{
+    font-size:12.5px;letter-spacing:.06em;color:var(--tintaFraca);
+    margin:18px 0 8px;padding:0 0 5px;border-bottom:1px solid var(--linha);
+  }
+  .projecao{
+    background:var(--papel);border:1px solid var(--linha);border-radius:var(--raio);
+    padding:16px;margin:0 0 16px;
+  }
+  .linhaProjecao{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid var(--linha)}
+  .linhaProjecao:last-child{border-bottom:none}
+  .negativo{color:var(--alerta);font-weight:700}
+  .rodape{margin:34px 0 0;display:flex;gap:8px;flex-wrap:wrap}
+  .aviso{font-size:12.5px;color:var(--tintaFraca);margin:12px 0 0}
+</style>
+</head>
+<body>
+<div class="envelope">
+
+  <header>
+    <p class="diaHoje" id="diaHoje"></p>
+    <h1 class="marca">Meu painel</h1>
+  </header>
+
+  <div class="foco">
+    <p class="focoRotulo">Foco de agora</p>
+    <p class="focoTitulo" id="focoTitulo">Carregando</p>
+    <p class="focoMeta" id="focoMeta"></p>
+    <div class="focoResumo">
+      <div><b id="resumoAgenda">0</b>na agenda desta semana</div>
+      <div><b id="resumoSaldo">R$ 0</b>previsto em 30 dias</div>
+    </div>
+  </div>
+
+  <nav class="abas" role="tablist">
+    <button role="tab" id="abaPrioridades" aria-selected="true" onclick="trocarAba('prioridades')">Prioridades</button>
+    <button role="tab" id="abaAgenda" aria-selected="false" onclick="trocarAba('agenda')">Agenda</button>
+    <button role="tab" id="abaDinheiro" aria-selected="false" onclick="trocarAba('dinheiro')">Dinheiro</button>
+  </nav>
+
+  <!-- PRIORIDADES -->
+  <section id="secPrioridades">
+    <h2 class="tituloSecao">Minhas metas</h2>
+    <details class="form">
+      <summary>Nova meta</summary>
+      <div class="campos">
+        <div>
+          <label for="metaNome">O que você quer alcançar</label>
+          <input id="metaNome" placeholder="Ex.: quitar o cartão">
+        </div>
+        <div>
+          <label for="metaPrazo">Até quando</label>
+          <input id="metaPrazo" type="date">
+        </div>
+        <button class="botao" onclick="salvarMeta()">Salvar meta</button>
+      </div>
+    </details>
+    <div id="listaMetas"></div>
+
+    <h2 class="tituloSecao">Tarefas por prioridade</h2>
+    <details class="form">
+      <summary>Nova tarefa</summary>
+      <div class="campos">
+        <div>
+          <label for="tarefaNome">Tarefa</label>
+          <input id="tarefaNome" placeholder="Ex.: reunir notas fiscais do mês">
+        </div>
+        <div class="dupla">
+          <div>
+            <label for="tarefaPrioridade">Prioridade</label>
+            <select id="tarefaPrioridade">
+              <option value="alta">Alta</option>
+              <option value="media" selected>Média</option>
+              <option value="baixa">Baixa</option>
+            </select>
+          </div>
+          <div>
+            <label for="tarefaPrazo">Prazo</label>
+            <input id="tarefaPrazo" type="date">
+          </div>
+        </div>
+        <div>
+          <label for="tarefaMeta">Ligada a qual meta</label>
+          <select id="tarefaMeta"><option value="">Nenhuma</option></select>
+        </div>
+        <button class="botao" onclick="salvarTarefa()">Salvar tarefa</button>
+      </div>
+    </details>
+    <div id="listaTarefas"></div>
+  </section>
+
+  <!-- AGENDA -->
+  <section id="secAgenda" hidden>
+    <h2 class="tituloSecao">Compromissos, consultas e exames</h2>
+    <details class="form">
+      <summary>Novo item na agenda</summary>
+      <div class="campos">
+        <div>
+          <label for="evNome">O que é</label>
+          <input id="evNome" placeholder="Ex.: retorno cardiologista">
+        </div>
+        <div class="dupla">
+          <div>
+            <label for="evTipo">Tipo</label>
+            <select id="evTipo">
+              <option value="compromisso">Compromisso</option>
+              <option value="consulta">Consulta</option>
+              <option value="exame">Exame</option>
+            </select>
+          </div>
+          <div>
+            <label for="evData">Data</label>
+            <input id="evData" type="date">
+          </div>
+        </div>
+        <div class="dupla">
+          <div>
+            <label for="evHora">Horário</label>
+            <input id="evHora" type="time">
+          </div>
+          <div>
+            <label for="evLocal">Local</label>
+            <input id="evLocal" placeholder="Clínica, endereço">
+          </div>
+        </div>
+        <div>
+          <label for="evQuem">Profissional ou especialidade</label>
+          <input id="evQuem" placeholder="Ex.: Dra. Helena, cardiologia">
+        </div>
+        <div>
+          <label for="evObs">Preparo e observações</label>
+          <textarea id="evObs" placeholder="Ex.: jejum de 8 horas, levar pedido médico"></textarea>
+        </div>
+        <button class="botao" onclick="salvarEvento()">Salvar na agenda</button>
+      </div>
+    </details>
+    <div style="margin:0 0 12px">
+      <button class="botaoVazio" id="filtroProximos" onclick="alternarFiltro(true)">Próximos</button>
+      <button class="botaoVazio" id="filtroTodos" onclick="alternarFiltro(false)">Tudo, inclusive o que já passou</button>
+    </div>
+    <div id="listaEventos"></div>
+  </section>
+
+  <!-- DINHEIRO -->
+  <section id="secDinheiro" hidden>
+    <h2 class="tituloSecao">Ponto de partida</h2>
+    <div class="projecao">
+      <label for="saldoAtual">Quanto você tem hoje somando as contas</label>
+      <input id="saldoAtual" type="number" step="0.01" placeholder="0,00" onchange="salvarSaldo()">
+      <p class="aviso">Toda a previsão parte deste valor.</p>
+    </div>
+
+    <h2 class="tituloSecao">O que ainda vai entrar e sair</h2>
+    <details class="form">
+      <summary>Novo lançamento previsto</summary>
+      <div class="campos">
+        <div>
+          <label for="lcNome">Descrição</label>
+          <input id="lcNome" placeholder="Ex.: aluguel">
+        </div>
+        <div class="dupla">
+          <div>
+            <label for="lcTipo">Tipo</label>
+            <select id="lcTipo">
+              <option value="saida">Saída</option>
+              <option value="entrada">Entrada</option>
+            </select>
+          </div>
+          <div>
+            <label for="lcValor">Valor</label>
+            <input id="lcValor" type="number" step="0.01" placeholder="0,00">
+          </div>
+        </div>
+        <div class="dupla">
+          <div>
+            <label for="lcData">Data prevista</label>
+            <input id="lcData" type="date">
+          </div>
+          <div>
+            <label for="lcRepete">Repete todo mês</label>
+            <select id="lcRepete">
+              <option value="nao">Não</option>
+              <option value="sim">Sim</option>
+            </select>
+          </div>
+        </div>
+        <button class="botao" onclick="salvarLancamento()">Salvar lançamento</button>
+      </div>
+    </details>
+
+    <div class="projecao" id="quadroProjecao"></div>
+    <div id="listaLancamentos"></div>
+  </section>
+
+  <div class="rodape">
+    <button class="botaoVazio" onclick="exportar()">Baixar backup</button>
+    <label class="botaoVazio" style="display:inline-block">
+      Restaurar backup
+      <input type="file" accept="application/json" onchange="importar(event)" style="display:none">
+    </label>
+  </div>
+  <p class="aviso" id="avisoArmazenamento"></p>
+
+</div>
+
+<script>
+/* ---------- Armazenamento seguro ---------- */
+var memoria = {};
+var temLocal = true;
+try { localStorage.setItem("_teste","1"); localStorage.removeItem("_teste"); }
+catch (e) { temLocal = false; }
+
+function ler(chave){
+  try { return temLocal ? localStorage.getItem(chave) : (memoria[chave] || null); }
+  catch (e) { return memoria[chave] || null; }
+}
+function gravar(chave, valor){
+  memoria[chave] = valor;
+  try { if (temLocal) localStorage.setItem(chave, valor); } catch (e) { temLocal = false; }
+}
+
+var CHAVE = "meu_painel_dados";
+var dados = { metas:[], tarefas:[], eventos:[], lancamentos:[], saldoAtual:0 };
+
+function carregar(){
+  var bruto = ler(CHAVE);
+  if (bruto) {
+    try {
+      var salvo = JSON.parse(bruto);
+      dados.metas = salvo.metas || [];
+      dados.tarefas = salvo.tarefas || [];
+      dados.eventos = salvo.eventos || [];
+      dados.lancamentos = salvo.lancamentos || [];
+      dados.saldoAtual = salvo.saldoAtual || 0;
+    } catch (e) {}
+  }
+}
+function persistir(){ gravar(CHAVE, JSON.stringify(dados)); renderTudo(); }
+
+/* ---------- Utilidades ---------- */
+var DIAS = ["domingo","segunda","terça","quarta","quinta","sexta","sábado"];
+var MESES = ["janeiro","fevereiro","março","abril","maio","junho","julho","agosto","setembro","outubro","novembro","dezembro"];
+
+function novoId(){ return String(Date.now()) + Math.random().toString(16).slice(2,7); }
+
+function hojeISO(){
+  var d = new Date();
+  return d.getFullYear() + "/" + (d.getMonth()+1) + "/" + d.getDate();
+}
+function dataDeISO(iso){
+  if (!iso) return null;
+  var p = iso.split("/").length > 1 ? iso.split("/") : iso.split("-");
+  return new Date(Number(p[0]), Number(p[1])-1, Number(p[2]));
+}
+function inicioDoDia(d){ return new Date(d.getFullYear(), d.getMonth(), d.getDate()); }
+function diasEntre(a, b){ return Math.round((inicioDoDia(b) - inicioDoDia(a)) / 86400000); }
+
+function porExtenso(iso){
+  var d = dataDeISO(iso);
+  if (!d) return "";
+  var dif = diasEntre(new Date(), d);
+  if (dif === 0) return "hoje";
+  if (dif === 1) return "amanhã";
+  if (dif === -1) return "ontem";
+  var texto = DIAS[d.getDay()] + ", " + d.getDate() + " de " + MESES[d.getMonth()];
+  if (dif < 0) return texto + " (já passou)";
+  return texto;
+}
+function moeda(v){
+  return Number(v || 0).toLocaleString("pt-BR", { style:"currency", currency:"BRL" });
+}
+function limpo(txt){
+  return String(txt == null ? "" : txt)
+    .replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/>/g,"&gt;").replace(/"/g,"&quot;");
+}
+
+/* ---------- Metas ---------- */
+function salvarMeta(){
+  var nome = document.getElementById("metaNome").value.trim();
+  if (!nome) { alert("Escreva o nome da meta para salvar."); return; }
+  dados.metas.push({ id:novoId(), nome:nome, prazo:document.getElementById("metaPrazo").value });
+  document.getElementById("metaNome").value = "";
+  document.getElementById("metaPrazo").value = "";
+  persistir();
+}
+function apagarMeta(id){
+  if (!confirm("Apagar esta meta? As tarefas ligadas a ela continuam na lista.")) return;
+  dados.metas = dados.metas.filter(function(m){ return m.id !== id; });
+  dados.tarefas.forEach(function(t){ if (t.metaId === id) t.metaId = ""; });
+  persistir();
+}
+function renderMetas(){
+  var alvo = document.getElementById("listaMetas");
+  if (!dados.metas.length) {
+    alvo.innerHTML = '<div class="vazio">Comece nomeando uma meta. Depois ligue tarefas a ela e o progresso aparece sozinho.</div>';
+    return;
+  }
+  alvo.innerHTML = dados.metas.map(function(m){
+    var ligadas = dados.tarefas.filter(function(t){ return t.metaId === m.id; });
+    var feitas = ligadas.filter(function(t){ return t.feita; }).length;
+    var pct = ligadas.length ? Math.round(feitas / ligadas.length * 100) : 0;
+    var detalhe = ligadas.length
+      ? feitas + " de " + ligadas.length + " tarefas concluídas"
+      : "nenhuma tarefa ligada ainda";
+    if (m.prazo) detalhe += " • prazo " + porExtenso(m.prazo);
+    return '<div class="item baixa"><div class="itemCorpo">' +
+      '<p class="itemTitulo">' + limpo(m.nome) + '</p>' +
+      '<p class="itemDetalhe">' + detalhe + '</p>' +
+      '<div class="barra"><span style="width:' + pct + '%"></span></div>' +
+      '</div><button class="apagar" title="Apagar" onclick="apagarMeta(\'' + m.id + '\')">×</button></div>';
+  }).join("");
+}
+
+/* ---------- Tarefas ---------- */
+var PESO = { alta:0, media:1, baixa:2 };
+var ROTULO = { alta:"Alta", media:"Média", baixa:"Baixa" };
+
+function salvarTarefa(){
+  var nome = document.getElementById("tarefaNome").value.trim();
+  if (!nome) { alert("Escreva a tarefa para salvar."); return; }
+  dados.tarefas.push({
+    id:novoId(), nome:nome, feita:false,
+    prioridade:document.getElementById("tarefaPrioridade").value,
+    prazo:document.getElementById("tarefaPrazo").value,
+    metaId:document.getElementById("tarefaMeta").value
+  });
+  document.getElementById("tarefaNome").value = "";
+  document.getElementById("tarefaPrazo").value = "";
+  persistir();
+}
+function virarTarefa(id){
+  dados.tarefas.forEach(function(t){ if (t.id === id) t.feita = !t.feita; });
+  persistir();
+}
+function apagarTarefa(id){
+  dados.tarefas = dados.tarefas.filter(function(t){ return t.id !== id; });
+  persistir();
+}
+function ordenarTarefas(lista){
+  return lista.slice().sort(function(a,b){
+    if (a.feita !== b.feita) return a.feita ? 1 : -1;
+    if (PESO[a.prioridade] !== PESO[b.prioridade]) return PESO[a.prioridade] - PESO[b.prioridade];
+    if (a.prazo && b.prazo) return a.prazo < b.prazo ? -1 : 1;
+    if (a.prazo) return -1;
+    if (b.prazo) return 1;
+    return 0;
+  });
+}
+function renderTarefas(){
+  var sel = document.getElementById("tarefaMeta");
+  sel.innerHTML = '<option value="">Nenhuma</option>' + dados.metas.map(function(m){
+    return '<option value="' + m.id + '">' + limpo(m.nome) + '</option>';
+  }).join("");
+
+  var alvo = document.getElementById("listaTarefas");
+  if (!dados.tarefas.length) {
+    alvo.innerHTML = '<div class="vazio">Nenhuma tarefa por aqui. A primeira que você criar com prioridade alta vira seu foco de agora.</div>';
+    return;
+  }
+  alvo.innerHTML = ordenarTarefas(dados.tarefas).map(function(t){
+    var meta = dados.metas.filter(function(m){ return m.id === t.metaId; })[0];
+    var partes = [ROTULO[t.prioridade]];
+    if (t.prazo) partes.push(porExtenso(t.prazo));
+    if (meta) partes.push("meta: " + limpo(meta.nome));
+    return '<div class="item ' + t.prioridade + (t.feita ? " feita feito" : "") + '">' +
+      '<input class="marcador" type="checkbox" ' + (t.feita ? "checked" : "") +
+      ' onchange="virarTarefa(\'' + t.id + '\')" aria-label="Concluir tarefa">' +
+      '<div class="itemCorpo"><p class="itemTitulo">' + limpo(t.nome) + '</p>' +
+      '<p class="itemDetalhe">' + partes.join(" • ") + '</p></div>' +
+      '<button class="apagar" title="Apagar" onclick="apagarTarefa(\'' + t.id + '\')">×</button></div>';
+  }).join("");
+}
+
+/* ---------- Agenda ---------- */
+var soProximos = true;
+
+function salvarEvento(){
+  var nome = document.getElementById("evNome").value.trim();
+  var data = document.getElementById("evData").value;
+  if (!nome || !data) { alert("Preencha ao menos o que é e a data."); return; }
+  dados.eventos.push({
+    id:novoId(), nome:nome, data:data,
+    tipo:document.getElementById("evTipo").value,
+    hora:document.getElementById("evHora").value,
+    local:document.getElementById("evLocal").value.trim(),
+    quem:document.getElementById("evQuem").value.trim(),
+    obs:document.getElementById("evObs").value.trim()
+  });
+  ["evNome","evData","evHora","evLocal","evQuem","evObs"].forEach(function(id){
+    document.getElementById(id).value = "";
+  });
+  persistir();
+}
+function apagarEvento(id){
+  dados.eventos = dados.eventos.filter(function(e){ return e.id !== id; });
+  persistir();
+}
+function alternarFiltro(valor){ soProximos = valor; renderEventos(); }
+
+function renderEventos(){
+  document.getElementById("filtroProximos").style.background = soProximos ? "#E4EBE6" : "transparent";
+  document.getElementById("filtroTodos").style.background = soProximos ? "transparent" : "#E4EBE6";
+
+  var lista = dados.eventos.slice().sort(function(a,b){
+    if (a.data !== b.data) return a.data < b.data ? -1 : 1;
+    return (a.hora || "") < (b.hora || "") ? -1 : 1;
+  });
+  if (soProximos) {
+    lista = lista.filter(function(e){ return diasEntre(new Date(), dataDeISO(e.data)) >= 0; });
+  }
+  var alvo = document.getElementById("listaEventos");
+  if (!lista.length) {
+    alvo.innerHTML = '<div class="vazio">Agenda livre. Registre a próxima consulta ou exame com o preparo necessário para não depender da memória.</div>';
+    return;
+  }
+  var mesAtual = "";
+  alvo.innerHTML = lista.map(function(e){
+    var d = dataDeISO(e.data);
+    var rotuloMes = MESES[d.getMonth()] + " de " + d.getFullYear();
+    var cabecalho = "";
+    if (rotuloMes !== mesAtual) { mesAtual = rotuloMes; cabecalho = '<p class="agrupador">' + rotuloMes + '</p>'; }
+    var ehHoje = diasEntre(new Date(), d) === 0;
+    var partes = [porExtenso(e.data)];
+    if (e.hora) partes.push(e.hora);
+    if (e.quem) partes.push(limpo(e.quem));
+    if (e.local) partes.push(limpo(e.local));
+    var obs = e.obs ? '<p class="itemDetalhe"><strong>Preparo:</strong> ' + limpo(e.obs) + '</p>' : "";
+    return cabecalho + '<div class="item ' + e.tipo + (ehHoje ? " hoje" : "") + '"><div class="itemCorpo">' +
+      '<p class="itemTitulo">' + limpo(e.nome) + '</p>' +
+      '<p class="itemDetalhe">' + partes.join(" • ") + '</p>' + obs +
+      '</div><button class="apagar" title="Apagar" onclick="apagarEvento(\'' + e.id + '\')">×</button></div>';
+  }).join("");
+}
+
+/* ---------- Dinheiro ---------- */
+function salvarSaldo(){
+  dados.saldoAtual = Number(document.getElementById("saldoAtual").value || 0);
+  persistir();
+}
+function salvarLancamento(){
+  var nome = document.getElementById("lcNome").value.trim();
+  var valor = Number(document.getElementById("lcValor").value || 0);
+  var data = document.getElementById("lcData").value;
+  if (!nome || !valor || !data) { alert("Preencha descrição, valor e data prevista."); return; }
+  dados.lancamentos.push({
+    id:novoId(), nome:nome, valor:Math.abs(valor), data:data,
+    tipo:document.getElementById("lcTipo").value,
+    repete:document.getElementById("lcRepete").value === "sim"
+  });
+  document.getElementById("lcNome").value = "";
+  document.getElementById("lcValor").value = "";
+  persistir();
+}
+function apagarLancamento(id){
+  dados.lancamentos = dados.lancamentos.filter(function(l){ return l.id !== id; });
+  persistir();
+}
+
+/* Gera as ocorrencias previstas para os proximos 6 meses */
+function ocorrencias(){
+  var saida = [];
+  var limite = new Date();
+  limite.setMonth(limite.getMonth() + 6);
+  dados.lancamentos.forEach(function(l){
+    var base = dataDeISO(l.data);
+    if (!base) return;
+    if (!l.repete) { saida.push({ quando:base, valor:l.valor, tipo:l.tipo, nome:l.nome }); return; }
+    var passo = new Date(base.getTime());
+    var conta = 0;
+    while (passo <= limite && conta < 24) {
+      saida.push({ quando:new Date(passo.getTime()), valor:l.valor, tipo:l.tipo, nome:l.nome });
+      passo.setMonth(passo.getMonth() + 1);
+      conta++;
+    }
+  });
+  return saida.sort(function(a,b){ return a.quando - b.quando; });
+}
+
+function saldoEm(dias){
+  var alvo = new Date();
+  alvo.setDate(alvo.getDate() + dias);
+  var total = Number(dados.saldoAtual || 0);
+  ocorrencias().forEach(function(o){
+    if (o.quando <= alvo && diasEntre(new Date(), o.quando) >= 0) {
+      total += (o.tipo === "entrada" ? o.valor : -o.valor);
+    }
+  });
+  return total;
+}
+
+function renderDinheiro(){
+  document.getElementById("saldoAtual").value = dados.saldoAtual || "";
+
+  var quadro = document.getElementById("quadroProjecao");
+  var marcos = [30, 60, 90];
+  var linhas = marcos.map(function(d){
+    var v = saldoEm(d);
+    return '<div class="linhaProjecao"><span>Em ' + d + ' dias</span>' +
+      '<span class="' + (v < 0 ? "negativo" : "") + '">' + moeda(v) + '</span></div>';
+  }).join("");
+  var negativo = marcos.some(function(d){ return saldoEm(d) < 0; });
+  var alerta = negativo
+    ? '<p class="aviso negativo">A previsão fica negativa dentro desse período. Vale rever gastos ou antecipar alguma entrada.</p>'
+    : '<p class="aviso">Projeção calculada a partir do saldo de hoje somado aos lançamentos previstos.</p>';
+  quadro.innerHTML = '<div class="linhaProjecao"><span><strong>Saldo previsto</strong></span><span></span></div>' + linhas + alerta;
+
+  var alvo = document.getElementById("listaLancamentos");
+  if (!dados.lancamentos.length) {
+    alvo.innerHTML = '<div class="vazio">Cadastre as contas fixas e as entradas esperadas. Com isso a previsão de 30, 60 e 90 dias se monta sozinha.</div>';
+    return;
+  }
+  var ordenados = dados.lancamentos.slice().sort(function(a,b){ return a.data < b.data ? -1 : 1; });
+  alvo.innerHTML = ordenados.map(function(l){
+    var partes = [porExtenso(l.data)];
+    if (l.repete) partes.push("todo mês");
+    return '<div class="item ' + l.tipo + '"><div class="itemCorpo">' +
+      '<p class="itemTitulo">' + limpo(l.nome) + '</p>' +
+      '<p class="itemDetalhe">' + partes.join(" • ") + '</p></div>' +
+      '<span class="itemValor">' + (l.tipo === "entrada" ? "+" : "") + moeda(l.tipo === "entrada" ? l.valor : -l.valor) + '</span>' +
+      '<button class="apagar" title="Apagar" onclick="apagarLancamento(\'' + l.id + '\')">×</button></div>';
+  }).join("");
+}
+
+/* ---------- Foco ---------- */
+function renderFoco(){
+  var pendentes = ordenarTarefas(dados.tarefas.filter(function(t){ return !t.feita; }));
+  var titulo = document.getElementById("focoTitulo");
+  var sub = document.getElementById("focoMeta");
+
+  if (!pendentes.length) {
+    titulo.textContent = "Nada pendente agora";
+    sub.textContent = "Quando cadastrar uma tarefa, a mais urgente aparece aqui.";
+  } else {
+    var t = pendentes[0];
+    titulo.textContent = t.nome;
+    var meta = dados.metas.filter(function(m){ return m.id === t.metaId; })[0];
+    var partes = ["prioridade " + ROTULO[t.prioridade].toLowerCase()];
+    if (t.prazo) partes.push(porExtenso(t.prazo));
+    if (meta) partes.push("caminha para: " + meta.nome);
+    if (pendentes.length > 1) partes.push("mais " + (pendentes.length - 1) + " na fila");
+    sub.textContent = partes.join(" • ");
+  }
+
+  var semana = dados.eventos.filter(function(e){
+    var dif = diasEntre(new Date(), dataDeISO(e.data));
+    return dif >= 0 && dif <= 7;
+  }).length;
+  document.getElementById("resumoAgenda").textContent = semana;
+  document.getElementById("resumoSaldo").textContent = moeda(saldoEm(30));
+}
+
+/* ---------- Navegação e render ---------- */
+function trocarAba(qual){
+  var mapa = { prioridades:"secPrioridades", agenda:"secAgenda", dinheiro:"secDinheiro" };
+  Object.keys(mapa).forEach(function(k){
+    document.getElementById(mapa[k]).hidden = (k !== qual);
+    var b = document.getElementById("aba" + k.charAt(0).toUpperCase() + k.slice(1));
+    b.setAttribute("aria-selected", k === qual ? "true" : "false");
+  });
+}
+
+function renderTudo(){
+  renderFoco();
+  renderMetas();
+  renderTarefas();
+  renderEventos();
+  renderDinheiro();
+}
+
+/* ---------- Backup ---------- */
+function exportar(){
+  var blob = new Blob([JSON.stringify(dados, null, 2)], { type:"application/json" });
+  var a = document.createElement("a");
+  a.href = URL.createObjectURL(blob);
+  a.download = "meu_painel_backup.json";
+  a.click();
+  URL.revokeObjectURL(a.href);
+}
+function importar(evento){
+  var arquivo = evento.target.files[0];
+  if (!arquivo) return;
+  var leitor = new FileReader();
+  leitor.onload = function(){
+    try {
+      var novo = JSON.parse(leitor.result);
+      if (!confirm("Isso substitui tudo que está salvo agora. Continuar?")) return;
+      dados = {
+        metas: novo.metas || [], tarefas: novo.tarefas || [],
+        eventos: novo.eventos || [], lancamentos: novo.lancamentos || [],
+        saldoAtual: novo.saldoAtual || 0
+      };
+      persistir();
+      alert("Backup restaurado.");
+    } catch (e) { alert("Não consegui ler esse arquivo. Escolha o backup baixado por aqui."); }
+  };
+  leitor.readAsText(arquivo);
+}
+
+/* ---------- Início ---------- */
+(function(){
+  var d = new Date();
+  document.getElementById("diaHoje").textContent =
+    DIAS[d.getDay()] + ", " + d.getDate() + " de " + MESES[d.getMonth()];
+  if (!temLocal) {
+    document.getElementById("avisoArmazenamento").textContent =
+      "Este navegador está bloqueando o armazenamento local, então os dados somem ao fechar. Publique o arquivo ou libere o armazenamento do site para salvar de verdade.";
+  }
+  carregar();
+  renderTudo();
+})();
+</script>
+</body>
+</html>
