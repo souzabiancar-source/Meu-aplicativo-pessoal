@@ -1,0 +1,1113 @@
+{
+ "rooms": {
+  "closet": {
+   "n": "Closet",
+   "a": "\u224811,0 m\u00b2",
+   "p": "92,72 470,72 470,312 186,312",
+   "l": [
+    330,
+    240
+   ],
+   "note": "Arm\u00e1rios em L na parede do vizinho e na parede do banho, ilha com gavetas de vidro, sapateira na parede inclinada e espelho com LED e penteadeira ao lado da porta. Porta interna para o banho.",
+   "hide": false,
+   "chg": true
+  },
+  "hall": {
+   "n": "Hall de entrada",
+   "a": "8,75 m\u00b2",
+   "p": "405,72 680,72 680,310 405,310",
+   "l": [
+    545,
+    205
+   ],
+   "note": "Distribui para o closet, a su\u00edte e a circula\u00e7\u00e3o. Hoje a porta da su\u00edte abre direto para c\u00e1.",
+   "hide": true
+  },
+  "circ": {
+   "n": "Hall de entrada",
+   "a": "\u22483,5 m\u00b2",
+   "p": "685,150 850,150 850,305 685,305",
+   "l": [
+    767,
+    222
+   ],
+   "note": "Porta de entrada pivotante de ~1,20 m. Banco com sapateira e cabideiro na parede da esquerda, porta de correr da lavanderia na direita e p\u00f3rtico de ~1,7 m para a sala.",
+   "chg": true,
+   "open": true,
+   "styleOk": true
+  },
+  "lav": {
+   "n": "Lavanderia",
+   "a": "\u22483,6 m\u00b2",
+   "p": "850,150 1020,150 1020,305 850,305",
+   "l": [
+    915,
+    215
+   ],
+   "note": "Lavanderia com despensa (\u22482,0 \u00d7 1,8 m). M\u00e1quina lava e seca e tanque na parede da direita, prateleiras de despensa do ch\u00e3o ao teto na parede da sala, arm\u00e1rio alto ao lado da porta e janela basculante para a escada.",
+   "chg": true
+  },
+  "suite": {
+   "n": "Quarto do casal",
+   "a": "\u224815,7 m\u00b2",
+   "p": "186,312 685,312 685,565 290,565",
+   "l": [
+    440,
+    535
+   ],
+   "note": "Retangular, com a parede de janelas inteira para o telhado. Cama de frente para a janela, poltrona de leitura perto da porta, porta para o closet \u00e0 esquerda e para o banho \u00e0 direita.",
+   "chg": true
+  },
+  "banho": {
+   "n": "Banho su\u00edte",
+   "a": "\u22487,1 m\u00b2",
+   "p": "470,72 685,72 685,312 470,312",
+   "l": [
+    560,
+    250
+   ],
+   "note": "Banheiro do casal, \u22482,5 \u00d7 2,8 m: bancada de duas cubas, box no canto com janela alta basculante para a escada externa (vidro jateado), vaso, porta para o quarto e porta interna para o closet.",
+   "chg": true
+  },
+  "esc": {
+   "n": "Escrit\u00f3rio",
+   "a": "\u22487,5 m\u00b2",
+   "p": "685,700 960,700 960,898 685,898",
+   "l": [
+    822,
+    800
+   ],
+   "note": "Na frente do bloco, \u22483,2 \u00d7 2,3 m, com janela para o vazio e porta para a sala. Mesa de nogueira na janela, mesa bege na parede do lavabo e estante baixa na parede do banheiro.",
+   "chg": true
+  },
+  "sala": {
+   "n": "Estar + jantar + cozinha",
+   "a": "\u224852 m\u00b2",
+   "p": "685,305 1385,305 1385,780 1050,780 1050,700 685,700",
+   "l": [
+    1120,
+    405
+   ],
+   "note": "A \u00e1rea social fica cont\u00ednua, do p\u00f3rtico at\u00e9 as janelas. Cozinha no centro, jantar na janela, estar com TV e, na lateral esquerda, um canto de leitura e brinquedos junto \u00e0 janela do telhado.",
+   "styleOk": true,
+   "chg": true
+  },
+  "brinq": {
+   "n": "Brinquedos / TV",
+   "a": "\u22487,4 m\u00b2",
+   "p": "820,700 1050,700 1050,1025 820,1025",
+   "l": [
+    935,
+    850
+   ],
+   "open": true,
+   "note": "Aberta para a sala. Nichos com cestos na parede do fundo, prateleiras de livros de frente na parede do banheiro, puff de leitura no canto e mesinha com 4 cadeiras. Sem janela: a luz vem dos LEDs das prateleiras e da sala.",
+   "hide": true
+  },
+  "bsoc": {
+   "n": "Banho das crian\u00e7as",
+   "a": "\u22486,4 m\u00b2",
+   "p": "685,898 1050,898 1050,1025 685,1025",
+   "l": [
+    868,
+    965
+   ],
+   "note": "Horizontal, \u22484,3 \u00d7 1,5 m, com porta s\u00f3 para o quarto das crian\u00e7as. Box junto \u00e0 janela do vazio, bancada com duas cubas na parede do vizinho e vaso perto da porta.",
+   "chg": true
+  },
+  "kids": {
+   "n": "Su\u00edte das crian\u00e7as",
+   "a": "10,87 m\u00b2",
+   "p": "1050,780 1385,780 1385,1025 1050,1025",
+   "l": [
+    1215,
+    890
+   ],
+   "note": "Vira su\u00edte, com porta para o banheiro na parede da esquerda. O roupeiro fica com ~1,25 m e ganha arm\u00e1rios altos sobre a escrivaninha. A porta de entrada continua na parede da sala.",
+   "chg": true
+  },
+  "telhado": {
+   "n": "Telhado (n\u00edvel do piso)",
+   "a": "6,58 m\u00b2",
+   "p": "285,565 678,565 678,700 330,700",
+   "l": [
+    490,
+    640
+   ],
+   "out": true,
+   "note": "Fica no n\u00edvel do piso da casa. Se a estrutura permitir, pode virar um pequeno jardim visto das janelas da su\u00edte e do escrit\u00f3rio."
+  },
+  "vazio": {
+   "n": "Vazio",
+   "a": "13,04 m\u00b2",
+   "p": "330,700 678,700 678,1035 465,1035",
+   "l": [
+    560,
+    880
+   ],
+   "out": true,
+   "hatch": true,
+   "note": "Proje\u00e7\u00e3o da casa de baixo. N\u00e3o pode ser fechado."
+  },
+  "escada": {
+   "n": "Escada para o quintal",
+   "a": "",
+   "p": "690,62 1255,62 1255,140 690,140",
+   "l": [
+    970,
+    110
+   ],
+   "out": true,
+   "note": "Desce para o quintal."
+  },
+  "vest": {
+   "n": "Vest\u00edbulo",
+   "a": "\u22481,4 m\u00b2",
+   "p": "543,312 685,312 685,385 543,385",
+   "l": [
+    614,
+    345
+   ],
+   "hide": true,
+   "note": "Antessala s\u00f3 da fam\u00edlia. A porta para o foyer pode ser invis\u00edvel; do outro lado, a porta do quarto. Cabe um gancho para roup\u00e3o e um quadro."
+  },
+  "lavabo": {
+   "n": "Lavabo",
+   "a": "\u22482,5 m\u00b2",
+   "p": "960,700 1050,700 1050,898 960,898",
+   "l": [
+    1005,
+    800
+   ],
+   "hide": false,
+   "styleOk": true,
+   "note": "Lavabo social com porta para a sala, ao lado do escrit\u00f3rio. Mesmo estilo do banheiro das crian\u00e7as: azulejo s\u00e1lvia numa parede, bancada de madeira clara e metais dourados. Sem janela: exaustor.",
+   "chg": true
+  },
+  "ext": {
+   "n": "\u00c1rea externa (a confirmar)",
+   "a": "",
+   "p": "1030,145 1550,145 1550,1040 1395,1040 1395,305 1030,305",
+   "l": [
+    1290,
+    232
+   ],
+   "out": true,
+   "note": "A \u00e1rea roxa da planta. Me digam se \u00e9 varanda, terra\u00e7o ou outra coisa para eu incluir no estudo."
+  }
+ },
+ "fur": [
+  [
+   1115,
+   745,
+   150,
+   30,
+   "Rack/TV"
+  ],
+  [
+   1222,
+   784,
+   158,
+   72,
+   "Cama 1"
+  ],
+  [
+   1222,
+   950,
+   158,
+   72,
+   "Cama 2"
+  ],
+  [
+   1338,
+   864,
+   44,
+   82,
+   "Mesa"
+  ],
+  [
+   1306,
+   872,
+   24,
+   22,
+   ""
+  ],
+  [
+   1306,
+   918,
+   24,
+   22,
+   ""
+  ],
+  [
+   693,
+   165,
+   28,
+   125,
+   ""
+  ],
+  [
+   1025,
+   312,
+   75,
+   52,
+   "Torre"
+  ],
+  [
+   1100,
+   312,
+   125,
+   52,
+   "Pia"
+  ],
+  [
+   990,
+   452,
+   200,
+   50,
+   "Pen\u00ednsula"
+  ],
+  [
+   1015,
+   507,
+   22,
+   20,
+   ""
+  ],
+  [
+   1065,
+   507,
+   22,
+   20,
+   ""
+  ],
+  [
+   1115,
+   507,
+   22,
+   20,
+   ""
+  ],
+  [
+   1275,
+   340,
+   75,
+   153,
+   "Mesa"
+  ],
+  [
+   1245,
+   375,
+   22,
+   22,
+   ""
+  ],
+  [
+   1245,
+   425,
+   22,
+   22,
+   ""
+  ],
+  [
+   1245,
+   475,
+   22,
+   22,
+   ""
+  ],
+  [
+   1356,
+   375,
+   22,
+   22,
+   ""
+  ],
+  [
+   1356,
+   425,
+   22,
+   22,
+   ""
+  ],
+  [
+   1356,
+   475,
+   22,
+   22,
+   ""
+  ],
+  [
+   1090,
+   585,
+   210,
+   70,
+   "Sof\u00e1"
+  ],
+  [
+   1312,
+   640,
+   58,
+   62,
+   "Poltr."
+  ],
+  [
+   1165,
+   690,
+   50,
+   36,
+   ""
+  ],
+  [
+   700,
+   405,
+   75,
+   22,
+   ""
+  ],
+  [
+   688,
+   450,
+   26,
+   230,
+   ""
+  ],
+  [
+   735,
+   600,
+   50,
+   50,
+   "Puff"
+  ],
+  [
+   770,
+   500,
+   55,
+   55,
+   "Mesinha"
+  ],
+  [
+   358,
+   315,
+   134,
+   170,
+   "Cama casal"
+  ],
+  [
+   318,
+   316,
+   36,
+   30,
+   ""
+  ],
+  [
+   496,
+   316,
+   36,
+   30,
+   ""
+  ],
+  [
+   600,
+   470,
+   56,
+   56,
+   "Poltr."
+  ],
+  [
+   118,
+   75,
+   349,
+   48,
+   "Arm\u00e1rios"
+  ],
+  [
+   419,
+   215,
+   48,
+   94,
+   ""
+  ],
+  [
+   250,
+   165,
+   80,
+   40,
+   "Ilha"
+  ],
+  [
+   280,
+   285,
+   100,
+   24,
+   ""
+  ],
+  [
+   655,
+   392,
+   28,
+   80,
+   ""
+  ],
+  [
+   482,
+   75,
+   118,
+   42,
+   "Cubas"
+  ],
+  [
+   600,
+   75,
+   82,
+   85,
+   "Box"
+  ],
+  [
+   650,
+   200,
+   32,
+   36,
+   ""
+  ],
+  [
+   966,
+   156,
+   50,
+   44,
+   "M\u00e1q."
+  ],
+  [
+   966,
+   204,
+   50,
+   40,
+   "Tanque"
+  ],
+  [
+   855,
+   270,
+   160,
+   32,
+   "Despensa"
+  ],
+  [
+   855,
+   156,
+   32,
+   100,
+   ""
+  ],
+  [
+   688,
+   712,
+   50,
+   180,
+   "Mesa 1"
+  ],
+  [
+   907,
+   712,
+   50,
+   120,
+   "Mesa 2"
+  ],
+  [
+   745,
+   868,
+   150,
+   28,
+   ""
+  ],
+  [
+   745,
+   770,
+   22,
+   22,
+   ""
+  ],
+  [
+   877,
+   760,
+   22,
+   22,
+   ""
+  ],
+  [
+   1010,
+   712,
+   37,
+   50,
+   ""
+  ],
+  [
+   1012,
+   840,
+   34,
+   34,
+   ""
+  ],
+  [
+   790,
+   901,
+   3,
+   121,
+   ""
+  ],
+  [
+   830,
+   995,
+   140,
+   27,
+   "Cubas"
+  ],
+  [
+   985,
+   960,
+   32,
+   32,
+   ""
+  ],
+  [
+   1053,
+   835,
+   50,
+   105,
+   "Roup."
+  ]
+ ],
+ "marks": [
+  [
+   700,
+   700,
+   770,
+   700,
+   "porta do escrit\u00f3rio"
+  ],
+  [
+   975,
+   700,
+   1040,
+   700,
+   "lavabo"
+  ],
+  [
+   1058,
+   780,
+   1110,
+   780,
+   "porta do quarto"
+  ],
+  [
+   195,
+   312,
+   255,
+   312,
+   ""
+  ],
+  [
+   600,
+   312,
+   670,
+   312,
+   ""
+  ],
+  [
+   470,
+   150,
+   470,
+   210,
+   ""
+  ],
+  [
+   850,
+   175,
+   850,
+   250,
+   ""
+  ],
+  [
+   1050,
+   950,
+   1050,
+   1020,
+   ""
+  ]
+ ],
+ "win": [
+  [
+   680,
+   720,
+   680,
+   880
+  ],
+  [
+   680,
+   905,
+   680,
+   1010
+  ],
+  [
+   300,
+   565,
+   660,
+   565
+  ],
+  [
+   880,
+   150,
+   950,
+   150
+  ],
+  [
+   680,
+   82,
+   680,
+   142
+  ]
+ ],
+ "base_win": [
+  [
+   1385,
+   312,
+   1385,
+   500
+  ],
+  [
+   1385,
+   525,
+   1385,
+   760
+  ],
+  [
+   1385,
+   800,
+   1385,
+   1020
+  ],
+  [
+   410,
+   565,
+   575,
+   565
+  ],
+  [
+   605,
+   565,
+   655,
+   565
+  ],
+  [
+   680,
+   585,
+   680,
+   680
+  ],
+  [
+   680,
+   828,
+   680,
+   880
+  ]
+ ],
+ "entry": [
+  700,
+  802
+ ],
+ "portal": [
+  700,
+  845
+ ],
+ "wing": [
+  685,
+  320,
+  685,
+  380
+ ],
+ "walls": [
+  [
+   92,
+   72,
+   685,
+   72,
+   "w"
+  ],
+  [
+   92,
+   72,
+   290,
+   565,
+   "w"
+  ],
+  [
+   290,
+   565,
+   300,
+   565,
+   "w"
+  ],
+  [
+   300,
+   565,
+   660,
+   565,
+   "j"
+  ],
+  [
+   660,
+   565,
+   685,
+   565,
+   "w"
+  ],
+  [
+   470,
+   72,
+   470,
+   150,
+   "w"
+  ],
+  [
+   470,
+   210,
+   470,
+   312,
+   "w"
+  ],
+  [
+   186,
+   312,
+   195,
+   312,
+   "w"
+  ],
+  [
+   255,
+   312,
+   600,
+   312,
+   "w"
+  ],
+  [
+   670,
+   312,
+   685,
+   312,
+   "w"
+  ],
+  [
+   685,
+   72,
+   685,
+   82,
+   "w"
+  ],
+  [
+   685,
+   82,
+   685,
+   142,
+   "h"
+  ],
+  [
+   685,
+   142,
+   685,
+   320,
+   "w"
+  ],
+  [
+   685,
+   380,
+   685,
+   585,
+   "w"
+  ],
+  [
+   685,
+   585,
+   685,
+   680,
+   "j"
+  ],
+  [
+   685,
+   680,
+   685,
+   720,
+   "w"
+  ],
+  [
+   685,
+   720,
+   685,
+   880,
+   "j"
+  ],
+  [
+   685,
+   880,
+   685,
+   905,
+   "w"
+  ],
+  [
+   685,
+   905,
+   685,
+   1010,
+   "j"
+  ],
+  [
+   685,
+   1010,
+   685,
+   1025,
+   "w"
+  ],
+  [
+   685,
+   150,
+   700,
+   150,
+   "w"
+  ],
+  [
+   802,
+   150,
+   880,
+   150,
+   "w"
+  ],
+  [
+   880,
+   150,
+   950,
+   150,
+   "j"
+  ],
+  [
+   950,
+   150,
+   1020,
+   150,
+   "w"
+  ],
+  [
+   850,
+   150,
+   850,
+   175,
+   "w"
+  ],
+  [
+   850,
+   250,
+   850,
+   305,
+   "w"
+  ],
+  [
+   1020,
+   150,
+   1020,
+   305,
+   "w"
+  ],
+  [
+   850,
+   305,
+   1020,
+   305,
+   "w"
+  ],
+  [
+   1020,
+   305,
+   1385,
+   305,
+   "w"
+  ],
+  [
+   1385,
+   305,
+   1385,
+   315,
+   "w"
+  ],
+  [
+   1385,
+   315,
+   1385,
+   500,
+   "j"
+  ],
+  [
+   1385,
+   500,
+   1385,
+   525,
+   "w"
+  ],
+  [
+   1385,
+   525,
+   1385,
+   760,
+   "j"
+  ],
+  [
+   1385,
+   760,
+   1385,
+   800,
+   "w"
+  ],
+  [
+   1385,
+   800,
+   1385,
+   1020,
+   "j"
+  ],
+  [
+   1385,
+   1020,
+   1385,
+   1025,
+   "w"
+  ],
+  [
+   685,
+   1025,
+   1385,
+   1025,
+   "w"
+  ],
+  [
+   685,
+   700,
+   700,
+   700,
+   "w"
+  ],
+  [
+   770,
+   700,
+   975,
+   700,
+   "w"
+  ],
+  [
+   1040,
+   700,
+   1050,
+   700,
+   "w"
+  ],
+  [
+   960,
+   700,
+   960,
+   898,
+   "w"
+  ],
+  [
+   685,
+   898,
+   1050,
+   898,
+   "w"
+  ],
+  [
+   1050,
+   700,
+   1050,
+   950,
+   "w"
+  ],
+  [
+   1050,
+   1020,
+   1050,
+   1025,
+   "w"
+  ],
+  [
+   1050,
+   780,
+   1058,
+   780,
+   "w"
+  ],
+  [
+   1110,
+   780,
+   1385,
+   780,
+   "w"
+  ]
+ ],
+ "doors": [
+  [
+   700,
+   150,
+   802,
+   150
+  ],
+  [
+   850,
+   175,
+   850,
+   250
+  ],
+  [
+   685,
+   320,
+   685,
+   380
+  ],
+  [
+   195,
+   312,
+   255,
+   312
+  ],
+  [
+   600,
+   312,
+   670,
+   312
+  ],
+  [
+   470,
+   150,
+   470,
+   210
+  ],
+  [
+   700,
+   700,
+   770,
+   700
+  ],
+  [
+   975,
+   700,
+   1040,
+   700
+  ],
+  [
+   1058,
+   780,
+   1110,
+   780
+  ],
+  [
+   1050,
+   950,
+   1050,
+   1020
+  ]
+ ]
+}

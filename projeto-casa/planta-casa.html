@@ -1,0 +1,1137 @@
+<title>Planta da Nossa Casa</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Sora:wght@500;600;700&family=Instrument+Sans:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* Layout: prancheta de arquiteto — planta grande à esquerda, ficha do ambiente à direita; banheiro detalhado abaixo */
+:root{
+  --bg:#F1F0EC; --paper:#FBFAF7; --ink:#24272B; --muted:#6B6E70; --line:#CFCCC4;
+  --accent:#3E6B66; --accent-soft:#DCE7E4; --changed:#E9D9B8; --changed-ink:#7A5A1E;
+  --room:#FFFFFF; --room-out:#E6E3DB; --window:#4D8CB8; --divisa:#B04A8E;
+  --sel:#3E6B66;
+  --f-display:"Sora",ui-sans-serif,system-ui,sans-serif;
+  --f-body:"Instrument Sans",ui-sans-serif,system-ui,sans-serif;
+  --f-mono:"JetBrains Mono",ui-monospace,Menlo,monospace;
+  /* paleta do banheiro (fixa, é material real) */
+  --b-areia:#E4DACB; --b-greige:#B9AC9A; --b-quartzo:#F3EFE8; --b-preto:#1F1E1C; --b-luz:#F3D29C; --b-verde:#5D7350;
+}
+@media (prefers-color-scheme: dark){:root:not([data-theme="light"]){
+  --bg:#17191B; --paper:#1F2225; --ink:#E8E6E1; --muted:#A3A39E; --line:#3A3D40;
+  --accent:#7FB3AC; --accent-soft:#24393A; --changed:#4A3E26; --changed-ink:#E9C98A;
+  --room:#262A2E; --room-out:#1D2022; --window:#7DB6DD; --divisa:#D57BB6; --sel:#7FB3AC; color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#17191B; --paper:#1F2225; --ink:#E8E6E1; --muted:#A3A39E; --line:#3A3D40;
+  --accent:#7FB3AC; --accent-soft:#24393A; --changed:#4A3E26; --changed-ink:#E9C98A;
+  --room:#262A2E; --room-out:#1D2022; --window:#7DB6DD; --divisa:#D57BB6; --sel:#7FB3AC; color-scheme:dark}
+
+body{background:var(--bg);color:var(--ink);font:15px/1.55 var(--f-body);
+  padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px));padding-block:28px 56px}
+.wrap{max-width:1180px;margin:0 auto;display:grid;gap:40px}
+h1,h2,h3{font-family:var(--f-display);text-wrap:balance;margin:0;letter-spacing:-.01em}
+h1{font-size:clamp(26px,4vw,38px);font-weight:700}
+h2{font-size:24px;font-weight:600}
+h3{font-size:16px;font-weight:600}
+p{margin:0}
+.eyebrow{font:500 11px/1 var(--f-mono);letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.lede{color:var(--muted);max-width:62ch}
+header{display:grid;gap:10px}
+
+.tabs{display:flex;flex-wrap:wrap;gap:8px}
+.tab{font:600 14px/1 var(--f-body);border:1px solid var(--line);background:var(--paper);color:var(--ink);
+  padding:11px 14px;border-radius:999px;cursor:pointer;display:flex;gap:8px;align-items:center}
+.tab .k{font:500 11px/1 var(--f-mono);color:var(--muted)}
+.tab[aria-selected="true"]{background:var(--ink);color:var(--bg);border-color:var(--ink)}
+.tab[aria-selected="true"] .k{color:var(--bg);opacity:.7}
+.tab:focus-visible,.roomhit:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+
+.board{display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:20px;align-items:start}
+@media (max-width:900px){.board{grid-template-columns:1fr}}
+.planbox{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:12px;min-width:0}
+.scroll{overflow-x:auto}
+#plan{display:block;width:100%;min-width:640px;height:auto}
+.legend{display:flex;flex-wrap:wrap;gap:14px;font-size:12px;color:var(--muted);padding:10px 4px 2px}
+.legend span{display:inline-flex;gap:6px;align-items:center}
+.sw{width:14px;height:10px;border-radius:2px;display:inline-block;border:1px solid var(--line)}
+
+.side{display:grid;gap:16px;min-width:0}
+.card{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:18px;display:grid;gap:10px;min-width:0}
+.changes{margin:0;padding-left:18px;display:grid;gap:6px}
+.room-head{display:flex;justify-content:space-between;gap:10px;align-items:baseline;flex-wrap:wrap}
+.area{font:500 14px/1 var(--f-mono);font-variant-numeric:tabular-nums;color:var(--muted)}
+.pill{font:600 11px/1 var(--f-body);padding:5px 8px;border-radius:999px;display:inline-block;letter-spacing:.02em}
+.pill.ok{background:var(--accent-soft);color:var(--accent)}
+.pill.wait{background:var(--room-out);color:var(--muted)}
+.pill.chg{background:var(--changed);color:var(--changed-ink)}
+.btn{font:600 13px/1 var(--f-body);color:var(--accent);background:none;border:none;padding:0;cursor:pointer;text-align:left;text-decoration:underline;text-underline-offset:3px}
+
+/* SVG */
+.room{stroke:var(--ink);stroke-width:4;fill:var(--room)}
+.room.out{fill:var(--room-out);stroke-width:2;stroke-dasharray:10 7}
+.room.chg{fill:var(--changed)}
+.room.open{stroke-width:1.5;stroke-dasharray:6 6}
+.roomhit{cursor:pointer}
+.roomhit:hover .room{filter:brightness(.97)}
+.roomhit.sel .room{stroke:var(--sel);stroke-width:7}
+.rl{font:600 21px var(--f-body);fill:var(--ink);text-anchor:middle;pointer-events:none}
+.ra{font:400 16px var(--f-mono);fill:var(--muted);text-anchor:middle;pointer-events:none}
+.fur{fill:none;stroke:var(--muted);stroke-width:1.6}
+.furl{font:400 11px var(--f-mono);fill:var(--muted);text-anchor:middle;pointer-events:none;text-transform:uppercase}
+.win{stroke:var(--window);stroke-width:7}
+.div{stroke:var(--divisa);stroke-width:3;fill:none}
+.divl{font:500 13px var(--f-mono);fill:var(--divisa);letter-spacing:.08em}
+.hatch{stroke:var(--line);stroke-width:1.5}
+
+/* Banheiro */
+.bath{display:grid;grid-template-columns:minmax(0,1.1fr) minmax(0,1fr);gap:28px;align-items:start}
+@media (max-width:900px){.bath{grid-template-columns:1fr}}
+.ref{border-radius:10px;overflow:hidden;border:1px solid var(--line);background:var(--paper)}
+.ref img{display:block;width:100%;height:auto}
+.ref figcaption{font-size:12px;color:var(--muted);padding:8px 12px}
+.palette{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px}
+.chip{display:grid;gap:6px;font-size:12px;min-width:0}
+.chip i{display:block;height:46px;border-radius:6px;border:1px solid var(--line)}
+.chip b{font-weight:600;font-size:13px}
+.chip small{color:var(--muted)}
+.spec{width:100%;border-collapse:collapse;font-size:14px}
+.spec td{padding:9px 0;border-top:1px solid var(--line);vertical-align:top}
+.spec td:first-child{font-weight:600;width:34%;padding-right:12px}
+.bp{background:var(--paper);border:1px solid var(--line);border-radius:10px;padding:14px;display:grid;gap:10px}
+#bathplan{width:100%;max-width:420px;height:auto;justify-self:center}
+.bt{font:500 11px var(--f-mono);fill:var(--muted)}
+.bt2{font:600 12px var(--f-body);fill:var(--ink)}
+.tips{margin:0;padding-left:18px;display:grid;gap:6px}
+.cols{display:grid;gap:18px;min-width:0}
+.rooms-status{display:grid;grid-template-columns:repeat(auto-fill,minmax(200px,1fr));gap:10px}
+.rs{display:flex;justify-content:space-between;gap:8px;align-items:center;padding:10px 12px;border:1px solid var(--line);border-radius:8px;background:var(--paper);font-size:14px}
+@media (prefers-reduced-motion:no-preference){.room{transition:fill .25s}}
+</style>
+
+<div class="wrap">
+  <header>
+    <span class="eyebrow">Pavimento superior · 8,45 × 8,70 m · escala aprox.</span>
+    <h1>Planta da Nossa Casa</h1>
+    <p class="lede">Doze versões de layout desenhadas sobre a planta de vocês. A L é a versão final; as outras ficam para comparação. As versões D e E trazem a entrada para o lado da lavanderia. A versão final também tem uma <a href="https://claude.ai/artifact/FwXBbvCsA9tqXdLMhR5zg9" style="color:var(--accent);font-weight:600">maquete em 3D</a>. Clique em um ambiente para ver o que muda e o estilo de decoração dele. O banheiro da suíte já tem estilo definido; os outros ambientes recebem estilo quando chegarem as referências.</p>
+  </header>
+
+  <section class="board" aria-label="Comparar layouts">
+    <div class="cols">
+      <div class="tabs" role="tablist" id="tabs"></div>
+      <div class="planbox">
+        <div class="scroll"><svg id="plan" viewBox="50 30 1530 1040" role="img" aria-label="Planta baixa"></svg></div>
+        <div class="legend">
+          <span><i class="sw" style="background:var(--changed)"></i>Muda nesta versão</span>
+          <span><i class="sw" style="background:var(--window);border-color:var(--window)"></i>Janela</span>
+          <span><i class="sw" style="background:var(--divisa);border-color:var(--divisa)"></i>Divisa / vizinho (sem janela)</span>
+          <span><i class="sw" style="background:var(--room-out)"></i>Externo / vazio</span>
+        </div>
+      </div>
+    </div>
+    <aside class="side">
+      <div class="card" id="layoutCard"></div>
+      <div class="card" id="roomCard" aria-live="polite"></div>
+    </aside>
+  </section>
+
+  <section class="cols" id="portal-sec" aria-labelledby="ph">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · hall e circulação</span>
+      <h2 id="ph">Hall: pórtico de madeira no lugar da porta</h2>
+      <p class="lede">Na passagem do hall para a sala entra um pórtico de vigas de madeira com mãos-francesas curvas, sem porta e sem parede. Quem chega pela escada já vê a sala inteira e a luz da fachada. É o ponto mais rústico da casa, então o resto continua limpo e claro em volta dele.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refportico" alt="Referência: pórtico de vigas de madeira rústica com mãos-francesas curvas, abrindo de uma sala para uma área de jantar clara" src="">
+          <figcaption>Referência enviada por vocês.</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:#7E6449"></i><b>Demolição</b><small>Vigas e pilares</small></div>
+            <div class="chip"><i style="background:#A39D95"></i><b>Greige médio</b><small>Paredes do hall</small></div>
+            <div class="chip"><i style="background:#F4F2EE"></i><b>Branco</b><small>Rodapé e batentes</small></div>
+            <div class="chip"><i style="background:#D8BE98"></i><b>Madeira clara</b><small>Piso da área social</small></div>
+            <div class="chip"><i style="background:#2A2826"></i><b>Ferro preto</b><small>Pendente e ferragens</small></div>
+            <div class="chip"><i style="background:#E7E1D3"></i><b>Vidro âmbar</b><small>Cúpulas do pendente</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="card">
+          <h3>Especificação</h3>
+          <table class="spec"><tbody>
+            <tr><td>Pórtico</td><td>Viga de ~20 × 25 cm, dois pilares de ~20 × 20 cm e mãos-francesas curvas nos cantos. Vão de ~1,7 m. Altura livre de pelo menos 2,20 m.</td></tr>
+            <tr><td>Madeira</td><td>Demolição ou peroba escovada, acabamento em óleo fosco, sem verniz brilhante.</td></tr>
+            <tr><td>Estrutura</td><td>A madeira pode ser só revestimento. Se a viga real for de concreto ou metal, ela fica escondida dentro da caixa de madeira.</td></tr>
+            <tr><td>Paredes</td><td>Greige médio acetinado, um tom mais escuro que o da suíte. Rodapé branco de 15 cm, como na foto.</td></tr>
+            <tr><td>Hall</td><td>Porta de entrada pivotante de madeira, ~1,20 × 2,40 m. Banco com sapateira, ganchos para casacos, espelho e porta de correr para a lavanderia.</td></tr>
+            <tr><td>Iluminação</td><td>Pendente com cúpulas de vidro sobre a mesa de jantar, como na foto, e spots embutidos no forro do hall.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Para a casa conversar</h3>
+          <ul class="tips">
+            <li>Repitam a mesma madeira em mais dois lugares para o pórtico não ficar isolado: no pilar solto da sala, revestido igual aos pilares do pórtico, e numa viga falsa sobre a mesa de jantar, como no fundo da foto.</li>
+            <li>A suíte usa madeira clara (freijó) e o pórtico uma madeira mais escura e rústica. Funciona porque ficam em ambientes separados. Na área social, fiquem só com a rústica.</li>
+            <li>Um piso só para a casa toda: carvalho claro, da área social à suíte.</li>
+            <li>Confirmem com o engenheiro se a parede entre a circulação e a sala é estrutural antes de abrir o vão.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="sala-sec" aria-labelledby="sah">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · estar, jantar e cozinha</span>
+      <h2 id="sah">Sala e cozinha: madeira clara, branco e verde-sálvia</h2>
+      <p class="lede">Estilo escandinavo: armários brancos lisos, madeira clara na península, na mesa e no piso, azulejo verde-sálvia na cozinha e o mesmo verde no sofá. Tapete de juta, cortina de voil e plantas. Os móveis já estão desenhados na planta da versão final.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refsala" alt="Referência: sala integrada com cozinha branca e península de madeira, mesa oval de madeira junto à janela e sofá verde-sálvia sobre tapete de juta" src="">
+          <figcaption>Referência enviada por vocês.</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:#F6F4EF"></i><b>Branco</b><small>Armários e paredes</small></div>
+            <div class="chip"><i style="background:#D4B78F"></i><b>Carvalho claro</b><small>Piso, península, mesa</small></div>
+            <div class="chip"><i style="background:#9DAE97"></i><b>Sálvia</b><small>Azulejo e sofá</small></div>
+            <div class="chip"><i style="background:#C6AC82"></i><b>Juta</b><small>Tapete e pendente</small></div>
+            <div class="chip"><i style="background:#ECE7DE"></i><b>Off-white</b><small>Poltrona e cortina</small></div>
+            <div class="chip"><i style="background:#B8925A"></i><b>Latão</b><small>Torneira e puxadores</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="card">
+          <h3>Como fica na planta (versão final)</h3>
+          <table class="spec"><tbody>
+            <tr><td>Cozinha</td><td>Na parede de cima: torre com geladeira e fornos ao lado da lavanderia e bancada com a pia.</td></tr>
+            <tr><td>Península</td><td>De madeira, ~2,4 m × 60 cm, com cooktop e coifa de ilha, paralela à bancada, com 1 m de corredor entre as duas. Três banquetas do lado da sala.</td></tr>
+            <tr><td>Jantar</td><td>Mesa de 6 lugares junto às janelas da fachada, no sentido da janela, com pendente de ripas em cima.</td></tr>
+            <tr><td>Estar</td><td>Sofá sálvia de frente para a TV, poltrona off-white junto à janela, mesa de centro redonda e tapete de juta.</td></tr>
+            <tr><td>Canto de leitura</td><td>Na lateral esquerda, junto à janela do telhado: estante baixa com cestos, puff e mesinha infantil.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Especificação</h3>
+          <table class="spec"><tbody>
+            <tr><td>Armários</td><td>Branco fosco liso, sem puxador aparente (cava ou toque), até o teto.</td></tr>
+            <tr><td>Azulejo</td><td>Verde-sálvia 7,5 × 30 cm assentado na vertical, entre a bancada e os armários altos.</td></tr>
+            <tr><td>Bancada</td><td>Tampo de madeira clara ou quartzo branco. Península toda em madeira, com a lateral descendo até o piso.</td></tr>
+            <tr><td>Piso</td><td>Vinílico carvalho claro, régua larga, igual em toda a área social.</td></tr>
+            <tr><td>Iluminação</td><td>Pendente de ripas de madeira sobre a mesa, dois pendentes de cerâmica sobre a península e spots no forro da cozinha.</td></tr>
+            <tr><td>Cortina</td><td>Voil branco do teto ao chão em toda a fachada de janelas.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Pontos de atenção</h3>
+          <ul class="tips">
+            <li>A mesa ficou na janela, como na foto: saiu da frente do pórtico e as refeições têm luz natural.</li>
+            <li>A pia da foto tem janela. Se a área roxa da planta for externa, dá para abrir uma janela alta sobre a pia.</li>
+            <li>Com esta referência, o piso da casa fica resolvido: carvalho claro. Já apliquei o mesmo na suíte e no closet.</li>
+            <li>Para o pórtico conversar com a madeira clara, prefiram madeira envelhecida em tom médio em vez de demolição bem escura.</li>
+            <li>O pilar solto perto do sofá fica na ponta da península. Dá para revestir de madeira igual ao pórtico ou embutir nele uma prateleira.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="bsoc-sec" aria-labelledby="bsh">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · banheiro das crianças e lavabo</span>
+      <h2 id="bsh">Banheiro das crianças e lavabo: o mesmo verde da cozinha</h2>
+      <p class="lede">O banheiro das crianças e o lavabo seguem a sala: branco, madeira clara e o azulejo verde-sálvia da cozinha na parede do box. Fica alegre sem cansar e combina com o resto da área social.</p>
+    </div>
+    <div class="bath">
+      <div class="card">
+        <h3>Especificação</h3>
+        <table class="spec"><tbody>
+          <tr><td>Parede do box</td><td>Azulejo verde-sálvia 7,5 × 30 na vertical, o mesmo da cozinha, até o teto.</td></tr>
+          <tr><td>Outras paredes</td><td>Porcelanato branco fosco 60 × 120 ou tinta lavável branca acima de 1,20 m.</td></tr>
+          <tr><td>Piso</td><td>Porcelanato amadeirado claro antiderrapante, no tom do piso da sala.</td></tr>
+          <tr><td>Gabinete</td><td>Suspenso em carvalho claro, tampo branco e duas cubas esculpidas, uma para cada criança.</td></tr>
+          <tr><td>Metais</td><td>Latão escovado, igual à torneira da cozinha.</td></tr>
+          <tr><td>Espelho e luz</td><td>Espelho oval com moldura fina de madeira e arandela de vidro ao lado.</td></tr>
+          <tr><td>Box</td><td>Vidro incolor de correr, perfil dourado escovado ou sem perfil.</td></tr>
+        </tbody></table>
+      </div>
+      <div class="card">
+        <h3>Na planta e no dia a dia</h3>
+        <ul class="tips">
+          <li>O banheiro das crianças fica na horizontal, ≈4,3 × 1,5 m, com porta só para o quarto delas. O box vai na ponta da janela (≈1,2 × 1,5 m), a bancada de duas cubas na parede do vizinho e o vaso perto da porta.</li>
+          <li>A janela para o vazio fica dentro do box: ventila bem e o box seca rápido.</li>
+          <li>Pensando nas crianças: ducha manual com barra, ganchos baixos para toalha, gaveta em vez de porta no gabinete e espaço para um banquinho.</li>
+          <li>Lavabo (≈1,1 × 2,3 m), ao lado do escritório e com porta para a sala: bancada de madeira clara com cuba de apoio, vaso e uma parede em azulejo sálvia. Sem janela: exaustor ligado à luz.</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="esc-sec" aria-labelledby="eh">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · escritório</span>
+      <h2 id="eh">Escritório: nogueira e bege para duas pessoas</h2>
+      <p class="lede">Duas estações de trabalho, uma de frente para a outra. Do lado da janela, mesa e estante em nogueira. Na parede do lavabo, mesa em laca bege. No meio, uma passadeira de juta. É mais sóbrio que a sala e fica bom para concentrar.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refesc" alt="Referência: escritório com mesa e estante de nogueira junto à janela, mesa e armários bege na parede oposta e tapete de juta no meio" src="">
+          <figcaption>Referência enviada por vocês.</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:#6E4C34"></i><b>Nogueira</b><small>Mesa 1 e estante</small></div>
+            <div class="chip"><i style="background:#D6CBB2"></i><b>Laca bege</b><small>Mesa 2 e armários</small></div>
+            <div class="chip"><i style="background:#E9E3D6"></i><b>Linho</b><small>Paredes, cortina, cadeira</small></div>
+            <div class="chip"><i style="background:#C6AC82"></i><b>Juta</b><small>Passadeira e cestos</small></div>
+            <div class="chip"><i style="background:#B5704A"></i><b>Terracota</b><small>Vasos e objetos</small></div>
+            <div class="chip"><i style="background:#B8925A"></i><b>Latão</b><small>Trilho de luz</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="card">
+          <h3>Como fica na planta</h3>
+          <table class="spec"><tbody>
+            <tr><td>Medidas</td><td>≈3,2 × 2,3 m (≈7,5 m²), na frente do bloco do fundo, com janela para o vazio e porta para a sala.</td></tr>
+            <tr><td>Mesa 1</td><td>Nogueira, ~2,1 m na parede da janela, com gaveteiro embaixo.</td></tr>
+            <tr><td>Mesa 2</td><td>Laca bege, ~1,4 m na parede do lavabo, com gaveteiro.</td></tr>
+            <tr><td>Estante</td><td>Baixa, em nogueira, na parede do banheiro das crianças (~1,8 m), com nichos e portas.</td></tr>
+            <tr><td>Meio</td><td>~1,4 m livre entre as mesas: as duas cadeiras afastam sem bater uma na outra.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Especificação</h3>
+          <table class="spec"><tbody>
+            <tr><td>Marcenaria</td><td>Lâmina de nogueira natural com verniz fosco. Armários em laca bege fosca, com portas lisas e puxador cava.</td></tr>
+            <tr><td>Cadeiras</td><td>Para trabalhar todo dia, cadeira ergonômica em tecido linho ou bouclé, no lugar das cadeiras de jantar da foto.</td></tr>
+            <tr><td>Iluminação</td><td>Trilho no teto com spots direcionáveis e luz neutra (4000K) sobre as mesas.</td></tr>
+            <tr><td>Janela</td><td>Cortina de linho com persiana rolô blackout por trás, para cortar o reflexo na tela.</td></tr>
+            <tr><td>Infra</td><td>Tomadas e ponto de rede na altura do tampo nas duas mesas, e calha para cabos embaixo.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Pontos de atenção</h3>
+          <ul class="tips">
+            <li>Quem faz mais videochamadas deve ficar na mesa da janela: a luz bate no rosto, e atrás aparecem os armários bege, um fundo limpo. Na outra mesa, a janela fica atrás e a imagem sai escura.</li>
+            <li>A nogueira é mais escura que o carvalho da sala. Como o escritório é fechado, os dois não aparecem lado a lado, e a nogueira conversa com o pórtico.</li>
+            <li>Isolem a parede com o banheiro das crianças (lã de rocha no drywall ou alvenaria cheia), para o barulho do banho não atrapalhar uma reunião.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="kids-sec" aria-labelledby="kh">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · suíte das crianças</span>
+      <h2 id="kh">Quarto das crianças: um lado rosa, um lado azul</h2>
+      <p class="lede">Duas camas com gavetas, uma em cada parede comprida, e uma escrivaninha dividida embaixo da janela. Cada criança tem seu lado, com ripado, cabeceira e prateleiras com LED na sua cor. No meio, base branca e madeira clara, com tapete de bolinhas.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refkids" alt="Referência: quarto infantil com duas camas paralelas, lado rosa e lado azul, escrivaninha branca dividida embaixo da janela e tapete claro no meio" src="">
+          <figcaption>Referência enviada por vocês.</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:#E8C4BA"></i><b>Rosa antigo</b><small>Ripado e cabeceira 1</small></div>
+            <div class="chip"><i style="background:#8EA3B8"></i><b>Azul acinzentado</b><small>Lambri e cabeceira 2</small></div>
+            <div class="chip"><i style="background:#F4EFE6"></i><b>Off-white</b><small>Camas, mesa, roupeiro</small></div>
+            <div class="chip"><i style="background:#D4B78F"></i><b>Carvalho claro</b><small>Piso e plafon</small></div>
+            <div class="chip"><i style="background:#D9C3A0"></i><b>Palha</b><small>Cestos de brinquedo</small></div>
+            <div class="chip"><i style="background:#F3D29C"></i><b>Luz 3000K</b><small>Sanca e prateleiras</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="card">
+          <h3>Como fica na planta</h3>
+          <table class="spec"><tbody>
+            <tr><td>Medidas</td><td>O quarto tem 3,85 × 2,82 m, com a janela na parede curta. É a mesma proporção da foto.</td></tr>
+            <tr><td>Camas</td><td>Duas camas de solteiro (0,88 × 1,88 m), uma em cada parede comprida, com a cabeceira virada para a janela. Entre elas sobra ~1,05 m.</td></tr>
+            <tr><td>Escrivaninha</td><td>~1,0 m embaixo da janela, entre as cabeceiras, com gaveteiro no meio e duas cadeiras brancas.</td></tr>
+            <tr><td>Roupeiro</td><td>Na parede da esquerda, ~1,25 m, entre a porta do quarto e a porta do banheiro. Armários altos sobre a escrivaninha completam.</td></tr>
+            <tr><td>Banheiro</td><td>Porta na parede da esquerda, perto da cama 2, para o banheiro das crianças com duas cubas.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Especificação</h3>
+          <table class="spec"><tbody>
+            <tr><td>Paredes laterais</td><td>Lambri ou ripado vertical até ~1,20 m, um lado rosa e o outro azul. Acima, ripado (rosa) e lambri pintado (azul), como na foto.</td></tr>
+            <tr><td>Parede da janela</td><td>Off-white com adesivos de estrelas e um quadro de cada lado.</td></tr>
+            <tr><td>Camas</td><td>Marcenaria branca com 2 gavetas embaixo e cabeceira estofada contínua na cor de cada lado.</td></tr>
+            <tr><td>Prateleiras</td><td>Duas por cama, com fita de LED embaixo, para livros e bichinhos.</td></tr>
+            <tr><td>Iluminação</td><td>Plafon com aro de madeira, sanca de LED em volta e uma arandela de leitura com interruptor em cada cama.</td></tr>
+            <tr><td>Janela</td><td>Persiana romana de linho com forro blackout, para o sono da tarde.</td></tr>
+            <tr><td>Tapete</td><td>Claro, de bolinhas coloridas, lavável, entre as camas.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Pontos de atenção</h3>
+          <ul class="tips">
+            <li>A planta original tinha uma cama só. Desenhei para duas crianças, como na foto. Se for uma só, a segunda cama pode ser uma bicama para quando vierem amigos ou primos.</li>
+            <li>A janela da fachada é grande e as cabeceiras ficam perto dela. Vale vidro com boa vedação e cortina pesada no inverno.</li>
+            <li>Rosa e azul ficam na pintura, nas cabeceiras e na roupa de cama. A marcenaria é toda branca, então dá para mudar as cores quando eles crescerem sem refazer móveis.</li>
+            <li>Tomadas: uma em cada cabeceira, para abajur e carregador, e duas em cima da escrivaninha.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="brinq-sec" aria-labelledby="brh">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · canto de leitura e brinquedos</span>
+      <h2 id="brh">Canto de leitura e brinquedos, aberto para a sala</h2>
+      <p class="lede">Não tem mais sala de brinquedos. Os brinquedos do dia a dia ficam num canto aberto da sala, junto à janela do telhado, e o resto no quarto das crianças. Base clara e madeira, com a cor vinda dos próprios livros e brinquedos.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refbrinq" alt="Referência: sala de brinquedos com prateleiras de livros iluminadas, nichos brancos com cestos, mesinha infantil com quatro cadeiras, puff e tapete de bolinhas" src="">
+          <figcaption>Referência enviada por vocês.</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:#F4EFE6"></i><b>Off-white</b><small>Paredes e nichos</small></div>
+            <div class="chip"><i style="background:#D4B78F"></i><b>Carvalho claro</b><small>Piso, mesinha, cadeiras</small></div>
+            <div class="chip"><i style="background:#CFC6B8"></i><b>Feltro cinza</b><small>Cestos dos nichos</small></div>
+            <div class="chip"><i style="background:#E9DFC9"></i><b>Pelúcia creme</b><small>Puff e tapete</small></div>
+            <div class="chip"><i style="background:#C6AC82"></i><b>Palha</b><small>Cestos de chão</small></div>
+            <div class="chip"><i style="background:#F3D29C"></i><b>Luz 3000K</b><small>LED nas prateleiras</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="card">
+          <h3>Como fica na planta</h3>
+          <table class="spec"><tbody>
+            <tr><td>Parede da janela</td><td>Estante baixa (~2,7 m × 35 cm) com nichos e cestos de feltro, e livros de frente em cima, embaixo e ao lado da janela do telhado.</td></tr>
+            <tr><td>Leitura</td><td>Puff grande de pelúcia perto da janela, com abajur.</td></tr>
+            <tr><td>Centro</td><td>Mesinha de 60 × 60 cm com cadeirinhas, sobre tapete claro de bolinhas.</td></tr>
+            <tr><td>Visão</td><td>Fica à vista da cozinha e da península.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Pontos de atenção</h3>
+          <ul class="tips">
+            <li>Como fica na sala, tudo do dia a dia precisa ter cesto. Em 5 minutos a sala está arrumada.</li>
+            <li>Tapete lavável ou de placas encaixáveis embaixo da área de montar.</li>
+            <li>Brinquedos grandes e de coleção ficam no quarto das crianças, nos armários altos sobre a escrivaninha.</li>
+            <li>Quando as crianças crescerem, o canto vira biblioteca ou estar de leitura sem obra.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="banho" aria-labelledby="bh">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · banheiro da suíte</span>
+      <h2 id="bh">Banho do casal: atemporal, claro, metais pretos</h2>
+      <p class="lede">Base bege clara em porcelanato grande, metais e perfis em preto fosco, madeira greige no gabinete e luz quente indireta. Na versão final o banheiro tem ≈2,5 × 2,8 m, com bancada de duas cubas e janela alta para a escada externa dentro do box.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refimg" alt="Banheiro de referência: box de vidro com perfil preto, nicho iluminado, bancada clara com gabinete greige e espelho com LED" src="">
+          <figcaption>Referência enviada por vocês (imagem modificada por IA, @docaosaolarr).</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:var(--b-areia)"></i><b>Areia</b><small>Porcelanato piso e parede</small></div>
+            <div class="chip"><i style="background:var(--b-quartzo)"></i><b>Off-white</b><small>Bancada e louças</small></div>
+            <div class="chip"><i style="background:var(--b-greige)"></i><b>Greige</b><small>Gabinete suspenso</small></div>
+            <div class="chip"><i style="background:var(--b-preto)"></i><b>Preto fosco</b><small>Metais, box, toalheiro</small></div>
+            <div class="chip"><i style="background:var(--b-luz)"></i><b>Luz 3000K</b><small>Fitas de LED e spots</small></div>
+            <div class="chip"><i style="background:var(--b-verde)"></i><b>Verde</b><small>Plantas pendentes</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="bp">
+          <h3>Como fica na planta (versão final)</h3>
+          <svg id="bathplan" viewBox="0 0 440 400" role="img" aria-label="Planta do banheiro da suíte"></svg>
+        </div>
+        <div class="card">
+          <h3>Especificação</h3>
+          <table class="spec"><tbody>
+            <tr><td>Piso e paredes</td><td>Porcelanato 60×120 bege acetinado, até o teto. No box, a versão antiderrapante do mesmo piso.</td></tr>
+            <tr><td>Box</td><td>Vidro incolor 8 mm, porta de correr, perfil preto fosco do piso ao teto.</td></tr>
+            <tr><td>Chuveiro</td><td>Chuveiro de teto quadrado 25×25 preto + ducha manual com barra.</td></tr>
+            <tr><td>Nicho</td><td>Nicho horizontal na parede do box, com fita LED embutida e prateleira contínua.</td></tr>
+            <tr><td>Bancada</td><td>Quartzo off-white ou porcelanato laminado, ~1,40 m, duas cubas de embutir retangulares.</td></tr>
+            <tr><td>Gabinete</td><td>Suspenso, MDF greige fosco, gavetas com puxador cava (sem puxador aparente).</td></tr>
+            <tr><td>Espelho</td><td>Espelho do tamanho da bancada, com LED indireto atrás (3000K).</td></tr>
+            <tr><td>Janela</td><td>Basculante alta (~0,80 × 0,60 m, peitoril a 1,60 m), vidro jateado, voltada para a escada externa.</td></tr>
+            <tr><td>Metais</td><td>Torneiras de mesa, registro e toalheiro de barra em preto fosco.</td></tr>
+            <tr><td>Iluminação</td><td>Plafon quadrado embutido no centro, spot sobre a bancada e spot dentro do box.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Para ficar prático no dia a dia</h3>
+          <ul class="tips">
+            <li>Ralo linear junto à parede do fundo, em vez do ralo quadrado da foto: o piso cai para um lado só e a peça de porcelanato fica inteira.</li>
+            <li>Rejunte epóxi bege e juntas de 2 mm: mancha menos e quase não aparece.</li>
+            <li>Vaso com caixa acoplada ou embutida, na parede do hall de entrada. Porta interna para o closet: sai do banho e já se veste.</li>
+            <li>Gabinete suspenso: facilita limpar o piso e deixa o banheiro com cara de maior.</li>
+            <li>Mesmo com janela, vale um exaustor silencioso ligado à luz.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="quarto" aria-labelledby="qh">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · quarto do casal</span>
+      <h2 id="qh">Quarto do casal: bege, madeira e luz indireta</h2>
+      <p class="lede">Paredes greige, piso carvalho claro, cortina de voil do teto ao chão e madeira clara suspensa na parede da TV. Nada de lustre: a luz vem da sanca da cortina, da fita sob a prateleira e de spots. Combina com o banheiro, então a suíte inteira fica com a mesma linguagem.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refquarto" alt="Quarto de referência: parede greige com TV, bancada e prateleira de madeira com LED, cortina de voil com sanca iluminada e piso de madeira" src="">
+          <figcaption>Referência enviada por vocês.</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:#CFC7BC"></i><b>Greige</b><small>Paredes, acetinado</small></div>
+            <div class="chip"><i style="background:#D4B78F"></i><b>Carvalho claro</b><small>Piso, igual à sala</small></div>
+            <div class="chip"><i style="background:#CDA676"></i><b>Freijó</b><small>Bancada e prateleira</small></div>
+            <div class="chip"><i style="background:#ECE6DC"></i><b>Linho</b><small>Cortina, cabeceira, tapete</small></div>
+            <div class="chip"><i style="background:#A69280"></i><b>Fendi</b><small>Manta e almofadas</small></div>
+            <div class="chip"><i style="background:#C7A158"></i><b>Dourado</b><small>Luminária de mesa</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="bp">
+          <h3>Como fica na planta (versão final)</h3>
+          <svg id="suiteplan" viewBox="160 230 580 380" role="img" aria-label="Planta da suíte mobiliada"></svg>
+        </div>
+        <div class="card">
+          <h3>Especificação</h3>
+          <table class="spec"><tbody>
+            <tr><td>Paredes</td><td>Tinta acetinada greige claro. Na parede da TV, pode ser um tom um pouco mais escuro ou um efeito cimento suave.</td></tr>
+            <tr><td>Piso</td><td>Vinílico carvalho claro, régua larga, igual ao da sala. Silencioso e quente ao pisar.</td></tr>
+            <tr><td>Cortina</td><td>Voil ou linho off-white do teto ao chão, em cortineiro embutido no gesso com fita LED 3000K.</td></tr>
+            <tr><td>Parede da TV</td><td>Bancada suspensa de madeira (~0,95 m × 30 cm) com TV acima, na parede do foyer, ao lado da cama.</td></tr>
+            <tr><td>Ar-condicionado</td><td>Split acima da prateleira, como na foto. Prever ponto elétrico e dreno na obra.</td></tr>
+            <tr><td>Cama</td><td>Cabeceira estofada em linho claro na parede do closet e do banho, de frente para a janela. Roupa de cama bege e manta matelassê fendi.</td></tr>
+            <tr><td>Criados-mudos</td><td>Laqueados off-white, um de cada lado.</td></tr>
+            <tr><td>Tapete</td><td>Claro, de textura (bouclé ou sisal sintético), passando ~50 cm para fora da cama dos lados.</td></tr>
+            <tr><td>Iluminação</td><td>Spots embutidos direcionáveis, sanca na cortina, LED na prateleira e luminária dourada no criado-mudo. Sem lustre central.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Adaptações para esta planta</h3>
+          <ul class="tips">
+            <li>O quarto virou um retângulo de ≈15,7 m², com toda a parede de janelas para o telhado.</li>
+            <li>A cama fica de frente para a janela, com ~1,0 m livre até o vidro.</li>
+            <li>A porta do foyer abre na lateral, longe da cabeceira. A porta do banho abre para dentro do banho, para não bater na porta de entrada.</li>
+            <li>TV e bancada ficam na parede do foyer, vistas da cama de lado. Se preferirem, a TV pode ficar fora do quarto, que fica mais tranquilo.</li>
+            <li>A poltrona de leitura fica no canto da janela, perto da porta.</li>
+            <li>O espelho com moldura de LED da foto fica no closet, junto da penteadeira.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" id="closet-sec" aria-labelledby="ch">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Estilo definido · closet</span>
+      <h2 id="ch">Closet: marcenaria clara e espelho iluminado</h2>
+      <p class="lede">Armários off-white foscos com fundo de madeira em alguns nichos, puxadores redondos dourados, LED embaixo de cada prateleira e um espelho de corpo inteiro com penteadeira. O piso continua o mesmo da suíte, então os dois ambientes se emendam.</p>
+    </div>
+    <div class="bath">
+      <div class="cols">
+        <figure class="ref" style="margin:0">
+          <img id="refcloset" alt="Closet de referência: corredor com armários claros, puxadores dourados, LED nas prateleiras, espelho com LED e penteadeira ao fundo" src="">
+          <figcaption>Referência enviada por vocês (@designernubiaprocopio).</figcaption>
+        </figure>
+        <div class="card">
+          <h3>Paleta e materiais</h3>
+          <div class="palette">
+            <div class="chip"><i style="background:#E8DED2"></i><b>Areia</b><small>Marcenaria, fosco</small></div>
+            <div class="chip"><i style="background:#CDA676"></i><b>Freijó</b><small>Fundo de nichos</small></div>
+            <div class="chip"><i style="background:#B8925A"></i><b>Latão</b><small>Puxadores redondos</small></div>
+            <div class="chip"><i style="background:#9A6438"></i><b>Caramelo</b><small>Banqueta em couro</small></div>
+            <div class="chip"><i style="background:#D4B78F"></i><b>Carvalho claro</b><small>Piso, igual à suíte</small></div>
+            <div class="chip"><i style="background:#1F1E1C"></i><b>Preto</b><small>Spots no teto</small></div>
+          </div>
+        </div>
+      </div>
+      <div class="cols">
+        <div class="bp">
+          <h3>Como fica na planta (versão final)</h3>
+          <svg id="closetplan" viewBox="70 40 480 320" role="img" aria-label="Planta do closet com armários"></svg>
+        </div>
+        <div class="card">
+          <h3>Especificação</h3>
+          <table class="spec"><tbody>
+            <tr><td>Armários</td><td>MDF areia fosco, sem portas (como na foto) ou com portas de vidro reflecta bronze se quiserem menos poeira.</td></tr>
+            <tr><td>Divisão interna</td><td>Cabideiro longo, cabideiro duplo para camisas e calças, prateleiras, gaveteiro e maleiro até o teto.</td></tr>
+            <tr><td>Gavetas</td><td>Uma ou duas com tampo de vidro e divisórias de veludo para bijuterias, relógios e óculos.</td></tr>
+            <tr><td>Puxadores</td><td>Botão redondo em latão escovado.</td></tr>
+            <tr><td>Iluminação</td><td>Perfil de LED sob prateleiras e cabideiros, com sensor de presença. Spots sobrepostos cilíndricos pretos no teto. LED com IRC ≥ 90 para ver as cores das roupas de verdade.</td></tr>
+            <tr><td>Espelho</td><td>Corpo inteiro com fitas de LED verticais nas laterais. Penteadeira suspensa de ~1,0 m com tampo de vidro e banqueta caramelo.</td></tr>
+            <tr><td>Piso</td><td>Mesmo vinílico amadeirado da suíte, sem soleira entre os dois.</td></tr>
+          </tbody></table>
+        </div>
+        <div class="card">
+          <h3>Adaptações para esta planta</h3>
+          <ul class="tips">
+            <li>O closet ocupa o trapézio da divisa até a parede do banho (≈11 m²).</li>
+            <li>Armários na parede do vizinho (~4,1 m) e na parede do banho (~1,1 m), com cabideiros, gaveteiro e maleiro até o teto.</li>
+            <li>Ilha no meio com gavetas de tampo de vidro para bijuterias e relógios.</li>
+            <li>Sapateira baixa de 35 cm na parede inclinada, com banco em cima.</li>
+            <li>Espelho com LED e penteadeira ao lado da porta do quarto, e porta interna para o banho do casal.</li>
+            <li>Sem janela: grelha de ventilação na porta ou exaustor, para evitar mofo nas roupas.</li>
+          </ul>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="cols" aria-labelledby="sh">
+    <div style="display:grid;gap:8px">
+      <span class="eyebrow">Próximo passo</span>
+      <h2 id="sh">Estilo de cada ambiente</h2>
+      <p class="lede">Todos os ambientes já têm estilo. Quando escolherem a versão do layout, eu ajusto os desenhos detalhados para ela.</p>
+    </div>
+    <div class="rooms-status" id="status"></div>
+  </section>
+</div>
+
+<script>
+const NS="http://www.w3.org/2000/svg";
+const STYLE_OK={banho:true,suite:true,closet:true,sala:true,bsoc:true,esc:true,kids:true,brinq:true};
+const SOCIAL=[[1025,312,75,52,"Torre"],[1100,312,230,52,"Cozinha"],[1332,312,48,52,""],
+  [1000,452,230,50,"Península"],[1030,507,22,20,""],[1080,507,22,20,""],[1130,507,22,20,""],[1180,507,22,20,""],
+  [722,352,153,80,"Mesa oval"],[735,326,28,20,""],[790,326,28,20,""],[845,326,28,20,""],[735,437,28,20,""],[790,437,28,20,""],[845,437,28,20,""],
+  [1062,568,276,168,""],[1080,580,215,70,"Sofá"],[1312,600,58,62,"Poltr."],[1160,672,55,40,""]];
+const SOC_DROP=["Mesa 6","Cozinha","Gel.","Sofá","Poltr.","Centro"];
+// Ambientes da planta original (coordenadas em pixels da planta enviada; ~85 px = 1 m)
+const BASE={
+  closet:{n:"Closet",a:"8,52 m²",p:"92,72 405,72 405,310 186,310",l:[290,200],
+    note:"Closet grande, com portas para o hall e para a suíte. Sem janela: a parede da esquerda é a divisa."},
+  hall:{n:"Hall de entrada",a:"8,75 m²",p:"405,72 680,72 680,310 405,310",l:[545,205],
+    note:"Distribui para o closet, a suíte e a circulação. Hoje a porta da suíte abre direto para cá."},
+  circ:{n:"Circulação",a:"2,98 m²",p:"690,150 840,150 840,305 690,305",l:[765,232],
+    note:"Liga o hall, a lavanderia e a área social."},
+  lav:{n:"Lavanderia",a:"3,40 m²",p:"840,150 1020,150 1020,305 840,305",l:[930,200],
+    note:"Máquina e tanque lado a lado. Bem posicionada perto da escada para o quintal."},
+  suite:{n:"Suíte",a:"11,39 m²",p:"186,312 578,312 578,565 290,565",l:[480,530],
+    note:"Janela voltada para o telhado. Cama casal encostada na parede do closet."},
+  banho:{n:"Banho suíte",a:"3,15 m²",p:"580,315 680,315 680,565 580,565",l:[630,425],
+    note:"Tem cerca de 1,0 m de largura. Cabe vaso, pia e box em linha, mas a passagem fica com uns 55 cm: funciona, porém apertado."},
+  esc:{n:"Escritório",a:"6,38 m²",p:"690,475 910,475 910,700 690,700",l:[800,600],
+    note:"Para duas pessoas: mesa de nogueira embaixo da janela, mesa bege do lado da porta e estante em toda a parede de cima, com ~1,4 m livre entre as duas cadeiras."},
+  sala:{n:"Estar + jantar + cozinha",a:"44,80 m²",p:"690,305 1385,305 1385,780 1050,780 1050,700 910,700 910,475 690,475",l:[1215,430],
+    note:"Toda a luz vem da fachada da direita. Cozinha linear no alto, mesa de 6 lugares e sala com TV na parede do quarto das crianças. O pilar solto perto do sofá pode virar um painel ou estante."},
+  brinq:{n:"Brinquedos / TV",a:"≈7,4 m²",p:"820,700 1050,700 1050,1025 820,1025",l:[935,850],open:true,
+    note:"Aberta para a sala. Nichos com cestos na parede do fundo, prateleiras de livros de frente na parede do banheiro, puff de leitura no canto e mesinha com 4 cadeiras. Sem janela: a luz vem dos LEDs das prateleiras e da sala."},
+  bsoc:{n:"Banho social",a:"4,20 m²",p:"690,775 820,775 820,1025 690,1025",l:[755,880],
+    note:"Atende crianças e visitas. Janela para o vazio."},
+  kids:{n:"Quarto (crianças)",a:"10,87 m²",p:"1050,780 1385,780 1385,1025 1050,1025",l:[1215,890],
+    note:"Para dois: uma cama em cada parede comprida, cabeceiras viradas para a janela, escrivaninha dividida entre as duas e roupeiro na parede da porta."},
+  telhado:{n:"Telhado (nível do piso)",a:"6,58 m²",p:"285,565 678,565 678,700 330,700",l:[490,640],out:true,
+    note:"Fica no nível do piso da casa. Se a estrutura permitir, pode virar um pequeno jardim visto das janelas da suíte e do escritório."},
+  vazio:{n:"Vazio",a:"13,04 m²",p:"330,700 678,700 678,1035 465,1035",l:[560,880],out:true,hatch:true,
+    note:"Projeção da casa de baixo. Não pode ser fechado."},
+  escada:{n:"Escada para o quintal",a:"",p:"690,62 1255,62 1255,140 690,140",l:[970,110],out:true,
+    note:"Desce para o quintal."},
+  vest:{n:"Vestíbulo",a:"≈1,4 m²",p:"543,312 685,312 685,385 543,385",l:[614,345],hide:true,
+    note:"Antessala só da família. A porta para o foyer pode ser invisível; do outro lado, a porta do quarto. Cabe um gancho para roupão e um quadro."},
+  lavabo:{n:"Lavabo",a:"≈1,5 m²",p:"685,370 790,370 790,475 685,475",l:[737,415],hide:true,styleOk:true,
+    note:"Lavabo de visitas no foyer, com porta invisível para o foyer. Mesmo estilo do banheiro social: azulejo sálvia numa parede, bancada de madeira clara e metais dourados."},
+  ext:{n:"Área externa (a confirmar)",a:"",p:"1030,145 1550,145 1550,1040 1395,1040 1395,305 1030,305",l:[1290,232],out:true,
+    note:"A área roxa da planta. Me digam se é varanda, terraço ou outra coisa para eu incluir no estudo."}
+};
+const FUR_A=[
+  [115,76,275,40,"Armários"],[355,160,42,145,"Arm."],[462,76,100,30,"Aparador"],
+  [294,326,188,158,"Cama casal"],[300,520,100,40,"Cômoda"],
+  [1056,316,232,48,"Cozinha"],[1293,316,58,54,"Gel."],[912,362,133,76,"Mesa 6"],
+  [1088,515,205,75,"Sofá"],[1152,632,75,42,"Centro"],[1307,602,64,62,"Poltr."],[1115,745,150,30,"Rack/TV"],
+  [1053,870,50,150,"Roup."],[1222,784,158,72,"Cama 1"],[1222,950,158,72,"Cama 2"],[1338,864,44,82,"Mesa"],[1306,872,24,22,""],[1306,918,24,22,""],
+  [692,478,216,26,"Estante","esc"],[692,506,50,192,"Mesa 1","esc"],[858,506,50,96,"Mesa 2","esc"],[748,585,24,24,"","esc"],[828,540,24,24,"","esc"],[838,994,200,28,"Nichos + cestos"],[823,730,14,190,"","brq"],[828,935,46,44,"Puff","brq"],[960,895,50,50,"Mesa","brq"],[905,252,48,42,"Máq."],[960,258,48,36,"Tanque"]
+];
+const WIN=[[1385,312,1385,500],[1385,525,1385,760],[1385,800,1385,1020],[410,565,575,565],[605,565,655,565],[680,585,680,680],[680,828,680,880]];
+
+const LAYOUTS={
+  A:{k:"A",t:"Original",sub:"Como está na planta",changes:["Layout enviado por vocês, sem alterações."],rooms:{},fur:FUR_A},
+  B:{k:"B",t:"Suíte reservada",sub:"Ajuste leve, poucas paredes mudam",
+    changes:[
+      "Banho da suíte passa de ~1,0 m para ~1,60 m de largura (≈4,7 m²). Cabe o banheiro da referência: box no fundo com a janela, vaso e bancada de 1,15 m.",
+      "A suíte cede essa faixa e fica com ≈10,2 m². A cama casal e a porta da suíte continuam onde estão.",
+      "O closet fecha a porta para o hall e passa a abrir só pela suíte. Roupas e malas ficam na área íntima.",
+      "No lugar da porta do closet, o hall ganha um armário de entrada (sapatos, casacos, bolsas)."],
+    rooms:{
+      banho:{p:"545,315 680,315 680,565 545,565",a:"≈4,7 m²",l:[612,425],chg:true,
+        note:"Alargado para ~1,60 × 2,95 m. Recebe o estilo da referência (veja abaixo)."},
+      suite:{p:"186,312 543,312 543,565 290,565",a:"≈10,2 m²",l:[440,530],chg:true,
+        note:"Perde uma faixa de ~40 cm do lado do banho, onde hoje só há passagem. A porta continua no mesmo lugar e a cama não muda."},
+      closet:{chg:true,note:"Passa a ser acessado só pela suíte. Continua com 8,52 m²."},
+      hall:{chg:true,note:"Ganha armário de entrada na parede onde ficava a porta do closet."}
+    },
+    furAdd:[[409,112,36,170,"Arm."]]},
+  C:{k:"C",t:"Social integrado",sub:"Versão B + troca escritório ↔ brinquedos",
+    changes:[
+      "Tudo da versão B.",
+      "Brinquedos vai para onde era o escritório: ganha a janela para o telhado e fica aberto para o jantar. Dá para olhar as crianças da cozinha.",
+      "Escritório vai para o fundo, fechado com porta de correr. Fica maior (≈10 m²) e cabe um sofá-cama para hóspedes.",
+      "Ponto de atenção: o escritório novo não tem janela. Precisa de ventilação mecânica e boa iluminação. Para quem trabalha em casa todo dia, a versão B pode ser melhor."],
+    rooms:{
+      esc:{n:"Escritório + hóspedes",p:"820,700 1050,700 1050,1025 820,1025",a:"≈10,3 m²",l:[935,850],chg:true,open:false,
+        note:"Fechado com porta de correr para a sala. Mesa e estante na parede do fundo, sofá-cama na lateral. Sem janela: prever exaustão e luz bem planejada."},
+      brinq:{n:"Brinquedos",p:"690,475 910,475 910,700 690,700",a:"6,38 m²",l:[800,600],chg:true,open:true,
+        note:"Com janela para o telhado e aberto para a área do jantar, sem a parede da direita."}
+    },
+    furSwap:true}
+};
+LAYOUTS.C.rooms=Object.assign({},LAYOUTS.B.rooms,LAYOUTS.C.rooms);
+LAYOUTS.C.furAdd=LAYOUTS.B.furAdd;
+LAYOUTS.D={k:"D",t:"Entrada pela lavanderia",sub:"Hall novo no alto da escada, resto como na versão B",
+  changes:[
+    "A entrada passa a ser no alto da escada que vem do quintal. A porta abre direto na antiga circulação, que vira o hall de entrada, ao lado da lavanderia.",
+    "Entre o hall e o jantar não tem porta nem parede. O pórtico de madeira da referência marca a passagem, e quem entra já vê a sala e as janelas.",
+    "A porta da lavanderia vira uma porta invisível, com o mesmo acabamento da parede. Quem chega não vê máquina nem tanque.",
+    "O hall antigo deixa de receber visitas e vira uma antessala íntima: rouparia, armário da casa (aspirador, malas) e acesso à suíte e ao closet.",
+    "Suíte, banho e closet continuam como na versão B."],
+  rooms:Object.assign({},LAYOUTS.B.rooms,{
+    circ:{n:"Hall de entrada",a:"2,98 m²",l:[765,222],chg:true,open:true,styleOk:true,
+      note:"Porta de entrada no alto da escada. Banco com sapateira na parede da esquerda e o pórtico de madeira abrindo para o jantar."},
+    hall:{n:"Antessala íntima",chg:true,
+      note:"Agora só a família passa por aqui. Rouparia e armário da casa na parede do vizinho, porta discreta para o hall novo e portas para a suíte e o closet."},
+    lav:{chg:true,note:"Mesmo tamanho. A porta vira porta invisível, pintada igual à parede do hall."},
+    sala:{l:[1215,405],note:"Estilo escandinavo da referência: cozinha branca com península de madeira e banquetas, mesa oval de jantar logo depois do pórtico, sofá verde-sálvia com tapete de juta virado para a TV."}}),
+  furDrop:["Aparador"].concat(SOC_DROP),furAdd:[[409,76,268,40,"Rouparia"],[693,170,28,120,""],[409,112,36,170,"Arm."]].concat(SOCIAL),
+  portal:[692,838],entry:[700,780]};
+LAYOUTS.E={k:"E",t:"Hall amplo",sub:"Hall maior, lavanderia compacta e suíte master",
+  changes:[
+    "Mesma entrada da versão D, no alto da escada.",
+    "A lavanderia fica compacta (≈2,4 m²), com máquina e tanque em linha e porta de correr. O hall cresce para ≈4,5 m² (2,5 × 1,8 m).",
+    "O pórtico de madeira fica com 2,4 m de largura, como na foto. Entrar em casa já é entrar na sala.",
+    "O hall antigo vira o closet. Ele é retangular, então fica parecido com o da referência: armário dos dois lados e espelho no fundo.",
+    "O closet antigo (o trapézio) passa a fazer parte do quarto. A suíte vai para ≈18,7 m², acaba o aperto no pé da cama e sobra um canto para poltrona de leitura.",
+    "A ala íntima tem uma porta só, no hall: hall → closet → quarto → banho. O banho continua como na versão B."],
+  rooms:{banho:LAYOUTS.B.rooms.banho,sala:{l:[1215,405],note:"Estilo escandinavo da referência: cozinha branca com península de madeira e banquetas, mesa oval de jantar logo depois do pórtico, sofá verde-sálvia com tapete de juta virado para a TV."},
+    circ:{n:"Hall de entrada",p:"690,150 905,150 905,305 690,305",a:"≈4,5 m²",l:[797,222],chg:true,open:true,styleOk:true,
+      note:"Porta de entrada no alto da escada. Banco com sapateira à esquerda, pórtico de madeira de 2,4 m abrindo para o jantar."},
+    lav:{p:"905,150 1020,150 1020,305 905,305",a:"≈2,4 m²",l:[962,266],chg:true,
+      note:"Máquina e tanque em linha na parede da direita, porta de correr para o hall. Fica compacta: vale máquina lava e seca para dispensar varal."},
+    hall:{n:"Closet",a:"8,75 m²",l:[545,215],chg:true,styleOk:true,
+      note:"Closet novo, retangular (3,2 × 2,8 m). Armários dos dois lados, espelho com LED no fundo e porta para o hall novo. O estilo da referência do closet vale aqui."},
+    closet:{hide:true},
+    suite:{n:"Suíte",p:"92,72 405,72 405,312 543,312 543,565 290,565",a:"≈18,7 m²",l:[300,290],chg:true,
+      note:"Junta o quarto com o antigo closet. A cama vai para o canto do antigo closet, encostada na parede do vizinho, com a TV de frente ao lado da janela e uma poltrona de leitura."}},
+  furDrop:["Aparador","Armários","Arm.","Máq.","Tanque","Cama casal","Cômoda"].concat(SOC_DROP),
+  furAdd:[[409,76,268,40,"Armários"],[409,118,40,150,""],[636,118,40,150,""],[964,158,50,44,"Máq."],[964,210,50,40,"Tanque"],[693,165,28,125,""],[230,85,134,168,"Cama casal"],[292,537,112,26,"TV"],[430,470,56,56,"Poltr."]].concat(SOCIAL),
+  portal:[700,904],entry:[700,780]};
+const SOCIAL_F=[[1025,312,75,52,"Torre"],[1100,312,125,52,"Pia"],
+  [990,452,200,50,"Península"],[1015,507,22,20,""],[1065,507,22,20,""],[1115,507,22,20,""],
+  [1275,340,75,153,"Mesa"],[1245,375,22,22,""],[1245,425,22,22,""],[1245,475,22,22,""],[1356,375,22,22,""],[1356,425,22,22,""],[1356,475,22,22,""],
+  [1090,585,210,70,"Sofá"],[1312,640,58,62,"Poltr."],[1165,690,50,36,""],[800,446,104,26,"Aparador"]];
+LAYOUTS.F={k:"F",t:"Jantar na janela",sub:"Versão E com a área social reorganizada",
+  changes:[
+    "Tudo da versão E: entrada pela escada, hall amplo, closet novo e suíte master.",
+    "A mesa de jantar sai da frente do pórtico e vai para a fachada de janelas, entre a cozinha e o estar. As refeições ficam com luz natural e vista.",
+    "Atrás do pórtico fica um foyer: um aparador com quadro bem em frente e, à direita, a sala inteira se abrindo até as janelas.",
+    "Ganha um lavabo para visitas (≈1,5 m²) no canto do foyer, encostado no banho da suíte para aproveitar a hidráulica. Visita não precisa mais ir ao banheiro das crianças.",
+    "A cozinha vira um bloco no centro: torre de fornos e geladeira com a pia na parede, e península de ~2,4 m com cooktop e 3 banquetas.",
+    "O estar continua junto às janelas, com o sofá de frente para a TV e ~1,1 m de passagem entre o sofá e a mesa."],
+  rooms:Object.assign({},LAYOUTS.E.rooms,{
+    sala:{l:[1120,405],a:"≈43,3 m²",styleOk:true,chg:true,
+      note:"Cozinha no centro, mesa de 6 lugares junto às janelas da fachada e estar logo abaixo, também na janela. Quem entra pelo pórtico vê o aparador e, à direita, a sala inteira."},
+    lavabo:{hide:false,chg:true},
+    circ:Object.assign({},LAYOUTS.E.rooms.circ,{note:"Porta de entrada no alto da escada e pórtico de madeira de 2,4 m. Depois do pórtico, um foyer com aparador e quadro, o lavabo à esquerda e a sala à direita."})}),
+  furDrop:LAYOUTS.E.furDrop,
+  furAdd:LAYOUTS.E.furAdd.filter(r=>!SOCIAL.includes(r)).concat(SOCIAL_F),
+  portal:[700,904],entry:[700,780]};
+LAYOUTS.G={k:"G",t:"Suíte reservada no foyer",sub:"Versão F com entrada própria para a suíte",
+  changes:[
+    "Tudo da versão F: jantar na janela, foyer com aparador e lavabo de visitas.",
+    "A suíte deixa de ser acessada pelo hall de entrada e pelo closet. A porta da ala íntima fica no foyer, logo depois do pórtico, na parede da esquerda, entre o pórtico e o lavabo.",
+    "Quem chega pela porta da casa olha reto para o aparador e para a sala. A porta da suíte fica de lado, fora dessa linha de visão, e pode ser invisível (pintada ou ripada igual à parede).",
+    "Essa porta abre num vestíbulo pequeno (≈1,4 m²), só da família. Dele se entra no quarto.",
+    "O banho da suíte troca de formato: fica com ≈2,2 × 2,1 m (≈4,6 m²), ainda com o box junto à janela do telhado. A porta dele abre para o quarto.",
+    "O closet passa a abrir só pelo quarto. A parede do hall de entrada fica inteira, com banco, cabideiro e sapateira.",
+    "A suíte fica com ≈17,6 m², praticamente o mesmo espaço da E."],
+  rooms:Object.assign({},LAYOUTS.F.rooms,{
+    vest:{hide:false,chg:true},
+    banho:{p:"500,385 685,385 685,565 500,565",a:"≈4,6 m²",l:[592,470],chg:true,
+      note:"Novo formato, ≈2,2 × 2,1 m. Box no fundo junto à janela do telhado, bancada na parede do vestíbulo e vaso na parede da direita. Porta para o quarto. O estilo da referência continua."},
+    suite:{n:"Suíte",p:"92,72 405,72 405,312 543,312 543,385 500,385 500,565 290,565",a:"≈17,6 m²",l:[300,290],chg:true,
+      note:"Entrada pelo vestíbulo, longe da porta da casa. Cama no canto do antigo closet, TV de frente ao lado da janela, porta para o banho e porta para o closet."},
+    hall:Object.assign({},LAYOUTS.E.rooms.hall,{note:"Closet retangular, agora com porta só para o quarto. Armários em U e espelho com penteadeira."}),
+    circ:Object.assign({},LAYOUTS.F.rooms.circ,{note:"Sem porta para a ala íntima. A parede da esquerda fica livre para banco, cabideiro e sapateira. Depois do pórtico, o foyer com aparador."})}),
+  furDrop:LAYOUTS.F.furDrop, furAdd:LAYOUTS.F.furAdd, portal:[700,904], entry:[700,780], wing:[685,320,685,380]};
+LAYOUTS.H={k:"H",t:"Escritório no foyer",sub:"Versão G sem lavabo e com escritório retangular",
+  changes:[
+    "Tudo da versão G: suíte com entrada discreta pelo foyer, jantar na janela e hall amplo.",
+    "Sai o lavabo. As visitas usam o banheiro social.",
+    "O escritório fica retangular, com ≈2,2 × 3,2 m (≈6,9 m²), na mesma proporção da foto de referência. A parede dele recua e libera uma faixa da sala: o caminho entre a cozinha, o estar e os brinquedos fica mais largo e reto.",
+    "A porta do escritório abre direto para o foyer, logo depois do pórtico. Quem vem para uma reunião passa pelo hall e entra no escritório sem atravessar a sala.",
+    "Dentro: bancada dupla de nogueira embaixo da janela, para duas pessoas lado a lado, e estante bege na parede oposta.",
+    "O foyer fica livre, com ≈1,5 m entre o pórtico e o escritório e o aparador ao lado da porta."],
+  rooms:Object.assign({},LAYOUTS.G.rooms,{
+    lavabo:{hide:true},
+    esc:{p:"685,430 870,430 870,700 685,700",a:"≈6,9 m²",l:[795,575],chg:true,
+      note:"Retangular, ≈2,2 × 3,2 m, com a porta para o foyer, ao lado do pórtico. Bancada dupla de nogueira embaixo da janela para duas pessoas e estante bege na parede da sala."},
+    sala:Object.assign({},LAYOUTS.F.rooms.sala,{p:"685,305 1385,305 1385,780 1050,780 1050,700 870,700 870,430 685,430",a:"≈44,9 m²",
+      note:"Mais aberta: sem lavabo e com a parede do escritório recuada. Cozinha no centro, mesa junto às janelas, estar logo abaixo e passagem larga para os brinquedos."}),
+    circ:Object.assign({},LAYOUTS.G.rooms.circ,{note:"Depois do pórtico, um foyer livre de ≈1,5 m. À esquerda a porta discreta da suíte, em frente a porta do escritório com o aparador ao lado, e à direita a sala."})}),
+  furDrop:LAYOUTS.F.furDrop, furDropTag:["esc"],
+  furAdd:LAYOUTS.F.furAdd.filter(r=>r[4]!=="Aparador").concat([[700,405,75,22,""],[688,440,50,255,"Mesa","esc2"],[745,515,22,22,""],[745,600,22,22,""],[838,505,30,190,""]]),
+  portal:[700,904], entry:[700,780], wing:[685,320,685,380], escDoor:[780,430,850,430]};
+LAYOUTS.I={k:"I",t:"Sem sala de brinquedos",sub:"Versão H com o escritório no lugar dos brinquedos",
+  changes:[
+    "Tudo da versão H: suíte reservada, jantar na janela, hall amplo e sem lavabo.",
+    "O escritório sai do meio da casa e vai para o fundo, onde era a sala de brinquedos. Fica com ≈3,1 × 3,8 m (≈11,9 m²) e ganha uma janela grande para o vazio, na parede da esquerda.",
+    "Cabe o layout da foto de referência: mesa de nogueira na janela e mesa bege na parede oposta, uma de frente para a outra, com estante no fundo. Sobra lugar para um sofá-cama.",
+    "Onde era o escritório vira área aberta. A sala ganha ≈7 m² e fica contínua do pórtico até as janelas. Ali entra um canto de leitura e brinquedos com estante baixa, cestos e puff, junto à janela do telhado.",
+    "O banheiro social vai para o lado do quarto das crianças (≈1,2 × 3,8 m, ≈4,5 m²), com porta para a sala. Fica sem janela, então precisa de exaustor.",
+    "A porta do quarto das crianças passa para a parede da sala, ao lado da TV.",
+    "Quem vem para reunião passa pelo pórtico e segue pela lateral esquerda até o escritório, sem passar pelas áreas íntimas."],
+  rooms:Object.assign({},LAYOUTS.H.rooms,{
+    brinq:{hide:true},
+    esc:{n:"Escritório",p:"685,700 950,700 950,1025 685,1025",a:"≈11,9 m²",l:[818,880],chg:true,open:false,
+      note:"No fundo da casa, ≈3,1 × 3,8 m, com janela grande para o vazio. Mesa de nogueira na janela, mesa bege na parede oposta, estante no fundo e espaço para sofá-cama. Porta para a sala."},
+    bsoc:{n:"Banho social",p:"950,700 1050,700 1050,1025 950,1025",a:"≈4,5 m²",l:[1000,870],chg:true,
+      note:"Comprido e estreito (≈1,2 × 3,8 m): pia e vaso perto da porta, box no fundo. Sem janela, com exaustor. Mesmo estilo de antes: azulejo sálvia, madeira clara e metais dourados."},
+    sala:Object.assign({},LAYOUTS.F.rooms.sala,{p:"685,305 1385,305 1385,780 1050,780 1050,700 685,700",a:"≈52 m²",l:[1120,405],
+      note:"A área social fica contínua, do pórtico até as janelas. Cozinha no centro, jantar na janela, estar com TV e, na lateral esquerda, um canto de leitura e brinquedos junto à janela do telhado."}),
+    kids:{chg:true,note:"Mesmo layout das duas camas. A porta passa para a parede da sala, ao lado do rack da TV."}}),
+  furDrop:LAYOUTS.F.furDrop.concat(["Nichos + cestos"]), furDropTag:["esc","brq"],
+  furAdd:LAYOUTS.F.furAdd.filter(r=>r[4]!=="Aparador").concat([[700,405,75,22,""],
+    [688,450,26,230,""],[735,600,50,50,"Puff"],[770,500,55,55,"Mesinha"],
+    [688,720,50,250,"Mesa 1"],[897,720,50,160,"Mesa 2"],[700,995,190,28,"Estante"],[745,790,22,22,""],[870,800,22,22,""],
+    [1008,720,38,60,""],[1012,800,34,34,""],[953,925,94,3,""]]),
+  portal:[700,904], entry:[700,780], wing:[685,320,685,380],
+  win:[[680,720,680,1010]],
+  marks:[[700,700,770,700,"porta do escritório"],[960,700,1030,700,"porta do banho"],[1058,780,1110,780,"porta do quarto"]]};
+LAYOUTS.J={k:"J",t:"Suíte reorganizada",sub:"Versão I com quarto, banho e closet redistribuídos",
+  changes:[
+    "Tudo da versão I: escritório no fundo, centro da casa aberto, jantar na janela e entrada da suíte pelo foyer.",
+    "A ala do casal vira duas faixas. Embaixo, junto à única parede que pode ter janela (a do telhado), fica só o quarto. Em cima, encostados nas paredes sem janela, ficam o closet e o banheiro.",
+    "O quarto vira um retângulo de ≈15,7 m² com a parede de janelas inteira, que pode ganhar uma janela de ~4 m. Somem o canto em L e o vestíbulo: a porta do foyer abre direto no quarto, do lado oposto à cama.",
+    "Cama com a cabeceira na parede do closet e do banho, de frente para a janela. Ao lado da porta sobra um canto de leitura com poltrona.",
+    "O banheiro do casal cresce para ≈2,5 × 2,8 m (≈7,1 m²), com bancada de duas cubas, box e vaso. Uma porta interna liga o banho direto ao closet: sai do banho e já se veste.",
+    "O closet ocupa o trapézio da divisa e vai até a parede do banho (≈11 m²): armários na parede do vizinho e na parede do banho, ilha no meio, sapateira na parede inclinada e espelho com penteadeira junto à porta.",
+    "Ponto de atenção: banho e closet ficam sem janela. Precisam de exaustor, e, se houver telhado logo acima, vale uma claraboia no banheiro."],
+  rooms:Object.assign({},LAYOUTS.I.rooms,{
+    vest:{hide:true}, hall:{hide:true},
+    suite:{n:"Quarto do casal",p:"186,312 685,312 685,565 290,565",a:"≈15,7 m²",l:[440,535],chg:true,
+      note:"Retangular, com a parede de janelas inteira para o telhado. Cama de frente para a janela, poltrona de leitura perto da porta, porta para o closet à esquerda e para o banho à direita."},
+    closet:{hide:false,n:"Closet",p:"92,72 470,72 470,312 186,312",a:"≈11,0 m²",l:[330,240],chg:true,
+      note:"Armários em L na parede do vizinho e na parede do banho, ilha com gavetas de vidro, sapateira na parede inclinada e espelho com LED e penteadeira ao lado da porta. Porta interna para o banho."},
+    banho:{p:"470,72 685,72 685,312 470,312",a:"≈7,1 m²",l:[560,250],chg:true,
+      note:"Banheiro do casal, ≈2,5 × 2,8 m: bancada de duas cubas, box no canto, vaso, porta para o quarto e porta interna para o closet. Sem janela: exaustor e, se possível, claraboia."}}),
+  furDrop:LAYOUTS.I.furDrop, furDropTag:LAYOUTS.I.furDropTag,
+  furAdd:LAYOUTS.I.furAdd.filter(r=>r[0]>=685).concat([
+    [358,315,134,170,"Cama casal"],[318,316,36,30,""],[496,316,36,30,""],[600,470,56,56,"Poltr."],
+    [118,75,349,48,"Armários"],[419,215,48,94,""],[250,165,80,40,"Ilha"],[280,285,100,24,""],[655,392,28,80,""],
+    [482,75,118,42,"Cubas"],[600,75,82,85,"Box"],[650,200,32,36,""]]),
+  portal:[700,904], entry:[700,780], wing:[685,320,685,380],
+  win:[[680,720,680,1010],[300,565,660,565]],
+  marks:[[700,700,770,700,"porta do escritório"],[960,700,1030,700,"porta do banho"],[1058,780,1110,780,"porta do quarto"],
+    [195,312,255,312,""],[600,312,670,312,""],[470,150,470,210,""]]};
+LAYOUTS.K={k:"K",t:"Entrada e lavanderia maiores",sub:"Versão J com porta de entrada larga e lavanderia com despensa",
+  changes:[
+    "Tudo da versão J: suíte reorganizada, escritório no fundo, centro aberto e jantar na janela.",
+    "A porta de entrada passa de ~0,90 m para ~1,20 m de largura. Sugestão: porta pivotante de madeira, de piso a teto (2,40 m), que combina com o pórtico.",
+    "A lavanderia cresce de ≈2,4 m² para ≈3,6 m² (2,0 × 1,8 m) e ganha despensa: máquina lava e seca e tanque numa parede, prateleiras de despensa do chão ao teto na parede da sala e armário alto ao lado da porta.",
+    "A parede de cima da lavanderia dá para a escada externa: dá para abrir uma janela basculante para ventilar.",
+    "Para isso o hall fica um pouco mais estreito: ≈1,9 × 1,8 m (≈3,5 m²), ainda maior que a circulação original. O pórtico passa a ter ~1,7 m de vão.",
+    "A porta da lavanderia continua sendo de correr, no hall."],
+  rooms:Object.assign({},LAYOUTS.J.rooms,{
+    circ:Object.assign({},LAYOUTS.J.rooms.circ,{p:"685,150 850,150 850,305 685,305",a:"≈3,5 m²",l:[767,222],chg:true,
+      note:"Porta de entrada pivotante de ~1,20 m. Banco com sapateira e cabideiro na parede da esquerda, porta de correr da lavanderia na direita e pórtico de ~1,7 m para a sala."}),
+    lav:{n:"Lavanderia",p:"850,150 1020,150 1020,305 850,305",a:"≈3,6 m²",l:[915,215],chg:true,
+      note:"Lavanderia com despensa (≈2,0 × 1,8 m). Máquina lava e seca e tanque na parede da direita, prateleiras de despensa do chão ao teto na parede da sala, armário alto ao lado da porta e janela basculante para a escada."}}),
+  furDrop:LAYOUTS.J.furDrop.concat(["Máq.","Tanque"]), furDropTag:LAYOUTS.J.furDropTag,
+  furAdd:LAYOUTS.J.furAdd.filter(r=>!(r[0]===964)).concat([[966,156,50,44,"Máq."],[966,204,50,40,"Tanque"],[855,270,160,32,"Despensa"],[855,156,32,100,""]]),
+  portal:[700,845], entry:[700,802], wing:[685,320,685,380],
+  win:LAYOUTS.J.win.concat([[880,150,950,150]]), marks:LAYOUTS.J.marks.concat([[850,175,850,250,""]])};
+LAYOUTS.L={k:"L",t:"Versão final",sub:"Versão K com suíte das crianças, escritório à frente, lavabo e janela no banho do casal",
+  changes:[
+    "Tudo da versão K: entrada e lavanderia maiores, suíte do casal reorganizada e centro aberto.",
+    "O banheiro social vira o banheiro das crianças. Fica na horizontal, no fundo da antiga área do escritório, de ponta a ponta (≈4,3 × 1,5 m, ≈6,4 m²), e ganha janela para o vazio, com o box junto dela.",
+    "A porta dele abre só para o quarto das crianças, que vira suíte. Cabem duas cubas lado a lado, uma para cada criança.",
+    "O escritório vem para a frente (≈3,2 × 2,3 m, ≈7,5 m²), com porta para a sala e a outra parte da janela para o vazio. Mesa de nogueira na janela e mesa bege na parede oposta.",
+    "Volta o lavabo social (≈1,1 × 2,3 m), ao lado do escritório, com porta para a sala. Serve visitas e clientes do escritório.",
+    "No quarto das crianças, o roupeiro encolhe para ~1,25 m para abrir a porta do banheiro. Armários altos sobre a escrivaninha compensam.",
+    "O banheiro do casal ganha janela: o canto dele encosta no patamar da escada externa. Janela alta basculante (~0,80 × 0,60 m, a 1,60 m do chão) com vidro jateado, dentro do box. Ventila e dá privacidade para quem sobe a escada."],
+  rooms:Object.assign({},LAYOUTS.K.rooms,{
+    esc:{n:"Escritório",p:"685,700 960,700 960,898 685,898",a:"≈7,5 m²",l:[822,800],chg:true,
+      note:"Na frente do bloco, ≈3,2 × 2,3 m, com janela para o vazio e porta para a sala. Mesa de nogueira na janela, mesa bege na parede do lavabo e estante baixa na parede do banheiro."},
+    lavabo:{hide:false,n:"Lavabo",p:"960,700 1050,700 1050,898 960,898",a:"≈2,5 m²",l:[1005,800],chg:true,styleOk:true,
+      note:"Lavabo social com porta para a sala, ao lado do escritório. Mesmo estilo do banheiro das crianças: azulejo sálvia numa parede, bancada de madeira clara e metais dourados. Sem janela: exaustor."},
+    bsoc:{n:"Banho das crianças",p:"685,898 1050,898 1050,1025 685,1025",a:"≈6,4 m²",l:[868,965],chg:true,
+      note:"Horizontal, ≈4,3 × 1,5 m, com porta só para o quarto das crianças. Box junto à janela do vazio, bancada com duas cubas na parede do vizinho e vaso perto da porta."},
+    banho:Object.assign({},LAYOUTS.J.rooms.banho,{chg:true,note:"Banheiro do casal, ≈2,5 × 2,8 m: bancada de duas cubas, box no canto com janela alta basculante para a escada externa (vidro jateado), vaso, porta para o quarto e porta interna para o closet."}),
+    kids:{n:"Suíte das crianças",chg:true,note:"Vira suíte, com porta para o banheiro na parede da esquerda. O roupeiro fica com ~1,25 m e ganha armários altos sobre a escrivaninha. A porta de entrada continua na parede da sala."}}),
+  furDrop:LAYOUTS.K.furDrop.concat(["Roup."]), furDropTag:LAYOUTS.K.furDropTag,
+  furAdd:LAYOUTS.K.furAdd.filter(r=>!(r[0]>=685&&r[0]<1050&&r[1]>=700)).concat([
+    [688,712,50,180,"Mesa 1"],[907,712,50,120,"Mesa 2"],[745,868,150,28,""],[745,770,22,22,""],[877,760,22,22,""],
+    [1010,712,37,50,""],[1012,840,34,34,""],
+    [790,901,3,121,""],[830,995,140,27,"Cubas"],[985,960,32,32,""],
+    [1053,835,50,105,"Roup."]]),
+  portal:[700,845], entry:[700,802], wing:[685,320,685,380],
+  win:[[680,720,680,880],[680,905,680,1010],[300,565,660,565],[880,150,950,150],[680,82,680,142]],
+  marks:[[700,700,770,700,"porta do escritório"],[975,700,1040,700,"lavabo"],[1058,780,1110,780,"porta do quarto"],
+    [195,312,255,312,""],[600,312,670,312,""],[470,150,470,210,""],[850,175,850,250,""],[1050,950,1050,1020,""]]};
+
+let cur="L", sel="bsoc";
+
+function roomsFor(k){
+  const L=LAYOUTS[k], out={};
+  for(const id in BASE){out[id]=Object.assign({},BASE[id],L.rooms[id]||{});}
+  return out;
+}
+function furFor(k){
+  const L=LAYOUTS[k];
+  let f=FUR_A.slice();
+  if(L.furDrop) f=f.filter(r=>!L.furDrop.includes(r[4]));
+  if(L.furDropTag) f=f.filter(r=>!L.furDropTag.includes(r[5]));
+  if(L.furAdd) f=f.concat(L.furAdd);
+  if(L.furSwap){
+    f=f.filter(r=>!["esc","brq"].includes(r[5])).filter(r=>!["Mesa","Estante"].includes(r[4])||r[0]>1300).filter(r=>!(r[0]===735&&r[1]===486));
+    f.push([700,640,200,52,"Tapete brincar"],[700,490,26,120,"Nichos"],[840,990,200,28,"Mesa + estante"],[994,730,48,150,"Sofá-cama"]);
+  }
+  return f;
+}
+function el(tag,attrs,parent){const e=document.createElementNS(NS,tag);for(const k in attrs)e.setAttribute(k,attrs[k]);if(parent)parent.appendChild(e);return e;}
+
+function drawPlan(){
+  const svg=document.getElementById("plan"); svg.innerHTML="";
+  const R=roomsFor(cur);
+  const defs=el("defs",{},svg);
+  const pat=el("pattern",{id:"h",width:16,height:16,patternUnits:"userSpaceOnUse",patternTransform:"rotate(45)"},defs);
+  el("line",{x1:0,y1:0,x2:0,y2:16,class:"hatch"},pat);
+  const order=["ext","escada","telhado","vazio","sala","brinq","esc","closet","hall","circ","lav","suite","banho","bsoc","kids","lavabo","vest"];
+  for(const id of order){
+    const r=R[id]; if(r.hide) continue;
+    const g=el("g",{class:"roomhit"+(id===sel?" sel":""),tabindex:0,role:"button","aria-label":r.n},svg);
+    const cls="room"+(r.out?" out":"")+(r.chg?" chg":"")+(r.open?" open":"");
+    el("polygon",{points:r.p,class:cls},g);
+    if(r.hatch) el("polygon",{points:r.p,fill:"url(#h)",stroke:"none"},g);
+    g.addEventListener("click",()=>{sel=id;render();});
+    g.addEventListener("keydown",e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();sel=id;render();}});
+  }
+  for(const f of furFor(cur)){
+    el("rect",{x:f[0],y:f[1],width:f[2],height:f[3],rx:3,class:"fur"},svg);
+    if(f[4]&&f[2]>40){const t=el("text",{x:f[0]+f[2]/2,y:f[1]+f[3]/2+4,class:"furl"},svg);t.textContent=f[4];}
+  }
+  for(const w of WIN) el("line",{x1:w[0],y1:w[1],x2:w[2],y2:w[3],class:"win"},svg);
+  const L=LAYOUTS[cur];
+  if(L.portal){const[a,b]=L.portal;
+    el("rect",{x:a,y:299,width:b-a,height:12,fill:"#8A6A4C"},svg);
+    el("rect",{x:a-4,y:295,width:16,height:20,fill:"#6E533B"},svg);el("rect",{x:b-12,y:295,width:16,height:20,fill:"#6E533B"},svg);
+    const t=el("text",{x:(a+b)/2,y:290,class:"furl",style:"font-weight:600"},svg);t.textContent="pórtico de madeira";}
+  if(L.wing){const[a,b,c,d]=L.wing;
+    el("line",{x1:a,y1:b,x2:c,y2:d,style:"stroke:var(--accent)","stroke-width":9},svg);
+    const t=el("text",{x:a+12,y:(b+d)/2+4,class:"furl",style:"fill:var(--accent);font-weight:600;text-anchor:start"},svg);t.textContent="porta da suíte";}
+  if(L.win) for(const w of L.win) el("line",{x1:w[0],y1:w[1],x2:w[2],y2:w[3],class:"win"},svg);
+  if(L.marks) for(const [a,b,c,d,txt] of L.marks){
+    el("line",{x1:a,y1:b,x2:c,y2:d,style:"stroke:var(--accent)","stroke-width":9},svg);
+    const t=el("text",{x:(a+c)/2,y:b-8,class:"furl",style:"fill:var(--accent);font-weight:600"},svg);t.textContent=txt;}
+  if(L.escDoor){const[a,b,c,d]=L.escDoor;
+    el("line",{x1:a,y1:b,x2:c,y2:d,style:"stroke:var(--accent)","stroke-width":9},svg);
+    const t=el("text",{x:(a+c)/2,y:b-8,class:"furl",style:"fill:var(--accent);font-weight:600"},svg);t.textContent="porta do escritório";}
+  if(L.entry){const[a,b]=L.entry,m=(a+b)/2;
+    el("rect",{x:a,y:144,width:b-a,height:12,style:"fill:var(--paper)"},svg);
+    el("path",{d:`M${m} 96 L${m} 136 M${m-9} 126 L${m} 138 L${m+9} 126`,fill:"none",style:"stroke:var(--accent)","stroke-width":4,"stroke-linecap":"round"},svg);
+    const t=el("text",{x:m+16,y:110,class:"divl",style:"fill:var(--accent);font-weight:600"},svg);t.textContent="ENTRADA";}
+  // divisas
+  el("polyline",{points:"70,60 690,60",class:"div"},svg);
+  el("polyline",{points:"70,60 465,1040 1555,1040",class:"div"},svg);
+  const t1=el("text",{x:90,y:50,class:"divl"},svg);t1.textContent="VIZINHO · SEM JANELAS";
+  const t2=el("text",{x:830,y:1062,class:"divl"},svg);t2.textContent="VIZINHO · SEM JANELAS";
+  const t3=el("text",{x:0,y:0,class:"divl",transform:"translate(132,330) rotate(68)"},svg);t3.textContent="DIVISA · MURO ANTIGA FÁBRICA";
+  for(const id of order){
+    const r=R[id]; if(r.hide) continue;
+    const small=id==="banho"&&cur==="A";
+    const t=el("text",{x:r.l[0],y:r.l[1],class:"rl",style:small?"font-size:15px":""},svg);
+    t.textContent=id==="sala"?"Estar · jantar · cozinha":(id==="banho"?"Banho":r.n.replace(" (nível do piso)","").replace(" (a confirmar)",""));
+    if(r.a){const a=el("text",{x:r.l[0],y:r.l[1]+22,class:"ra",style:small?"font-size:13px":""},svg);a.textContent=r.a;}
+  }
+}
+
+function render(){
+  // tabs
+  const tabs=document.getElementById("tabs"); tabs.innerHTML="";
+  for(const k of ["A","B","C","D","E","F","G","H","I","J","K","L"]){
+    const L=LAYOUTS[k],b=document.createElement("button");
+    b.className="tab";b.id="tab-"+k;b.setAttribute("role","tab");b.setAttribute("aria-selected",k===cur);
+    b.innerHTML=`<span class="k">${k}</span>${L.t}`;
+    b.onclick=()=>{cur=k;try{localStorage.setItem("layout",k)}catch(e){};render();};
+    tabs.appendChild(b);
+  }
+  const L=LAYOUTS[cur];
+  document.getElementById("layoutCard").innerHTML=
+    `<span class="eyebrow">Versão ${L.k}</span><h3>${L.t}</h3><p style="color:var(--muted);font-size:14px">${L.sub}</p>
+     <ul class="changes">${L.changes.map(c=>`<li>${c}</li>`).join("")}</ul>`;
+  if(roomsFor(cur)[sel].hide) sel="suite";
+  const r=roomsFor(cur)[sel];
+  const st=(STYLE_OK[sel]||r.styleOk)?`<span class="pill ok">Estilo definido</span>`:(r.out?"":`<span class="pill wait">Aguardando referência</span>`);
+  const chg=r.chg?`<span class="pill chg">Muda na versão ${cur}</span>`:"";
+  let extra="";
+  if(sel==="banho"){
+    extra=cur==="A"
+      ?`<p style="font-size:14px">O estilo da referência cabe aqui, mas com menos folga. A versão B alarga o banho para receber o desenho completo.</p><button class="btn" id="goBath">Ver o banheiro detalhado</button>`
+      :`<button class="btn" id="goBath">Ver o banheiro detalhado</button>`;
+  }
+  document.getElementById("roomCard").innerHTML=
+    `<div class="room-head"><h3>${r.n}</h3><span class="area">${r.a||""}</span></div>
+     <div style="display:flex;gap:6px;flex-wrap:wrap">${chg}${st}</div>
+     <p style="font-size:14px">${r.note}</p>${extra}`;
+  if(sel==="suite") extra=`<button class="btn" id="goSuite">Ver o quarto detalhado</button>`;
+  if(sel==="closet"||(sel==="hall"&&cur==="E")) extra=`<button class="btn" id="goCloset">Ver o closet detalhado</button>`;
+  if(sel==="circ"&&r.styleOk) extra=`<button class="btn" id="goPortal">Ver o hall e o pórtico</button>`;
+  if(["suite","closet","hall","circ"].includes(sel)) document.getElementById("roomCard").insertAdjacentHTML("beforeend",extra);
+  const JUMP={sala:"sala-sec",bsoc:"bsoc-sec",esc:"esc-sec",kids:"kids-sec",brinq:"brinq-sec"};
+  if(JUMP[sel]){document.getElementById("roomCard").insertAdjacentHTML("beforeend",`<button class="btn" id="goJump">Ver o estilo detalhado</button>`);
+    document.getElementById("goJump").onclick=()=>document.getElementById(JUMP[sel]).scrollIntoView({behavior:"smooth"});}
+  const gp=document.getElementById("goPortal"); if(gp) gp.onclick=()=>document.getElementById("portal-sec").scrollIntoView({behavior:"smooth"});
+  const gc=document.getElementById("goCloset"); if(gc) gc.onclick=()=>document.getElementById("closet-sec").scrollIntoView({behavior:"smooth"});
+  const gb=document.getElementById("goBath"); if(gb) gb.onclick=()=>document.getElementById("banho").scrollIntoView({behavior:"smooth"});
+  const gs=document.getElementById("goSuite"); if(gs) gs.onclick=()=>document.getElementById("quarto").scrollIntoView({behavior:"smooth"});
+  drawPlan();
+}
+
+function drawBath(){
+  // banho do casal (versão final) em metros: 2,53 × 2,82 ; 100 px = 1 m
+  const s=100,ox=80,oy=50,W=2.53,H=2.82, svg=document.getElementById("bathplan");
+  const X=m=>ox+m*s, Y=m=>oy+m*s;
+  const c=getComputedStyle(document.documentElement), v=n=>c.getPropertyValue(n).trim();
+  const ink=v("--ink"), muted=v("--muted"), win=v("--window"), black=v("--b-preto"), quartz=v("--b-quartzo");
+  el("rect",{x:X(0),y:Y(0),width:W*s,height:H*s,fill:v("--b-areia"),stroke:ink,"stroke-width":6},svg);
+  el("rect",{x:X(1.53),y:Y(0),width:1.0*s,height:1.05*s,fill:quartz,opacity:.7},svg);
+  el("line",{x1:X(1.53),y1:Y(0),x2:X(1.53),y2:Y(1.05),stroke:black,"stroke-width":3},svg);
+  el("line",{x1:X(1.53),y1:Y(1.05),x2:X(W),y2:Y(1.05),stroke:black,"stroke-width":3},svg);
+  el("line",{x1:X(1.6),y1:Y(1.11),x2:X(2.2),y2:Y(1.11),stroke:black,"stroke-width":2,"stroke-dasharray":"4 3"},svg);
+  el("rect",{x:X(1.88),y:Y(0.38),width:26,height:26,fill:black},svg);
+  el("rect",{x:X(1.58),y:Y(0.06),width:6,height:.92*s,fill:muted},svg);
+  el("line",{x1:X(W),y1:Y(0.12),x2:X(W),y2:Y(0.82),stroke:win,"stroke-width":8},svg);
+  el("rect",{x:X(0.12),y:Y(0),width:1.38*s,height:.5*s,fill:v("--b-greige"),stroke:ink,"stroke-width":1.5},svg);
+  for(const cx of [0.45,1.17]) el("rect",{x:X(cx-0.17),y:Y(0.1),width:34,height:26,rx:7,fill:quartz,stroke:ink,"stroke-width":1.2},svg);
+  el("line",{x1:X(0.15),y1:Y(0)+3,x2:X(1.47),y2:Y(0)+3,stroke:v("--b-luz"),"stroke-width":6},svg);
+  el("rect",{x:X(W-0.2),y:Y(1.45),width:.2*s,height:.4*s,fill:quartz,stroke:ink,"stroke-width":1.2},svg);
+  el("ellipse",{cx:X(W-0.42),cy:Y(1.65),rx:.21*s,ry:.17*s,fill:quartz,stroke:ink,"stroke-width":1.2},svg);
+  el("line",{x1:X(0)+4,y1:Y(1.95),x2:X(0)+4,y2:Y(2.45),stroke:black,"stroke-width":5},svg);
+  // portas
+  el("rect",{x:X(1.53),y:Y(H)-4,width:.82*s,height:8,fill:v("--paper")},svg);
+  el("path",{d:`M ${X(1.53)} ${Y(H)} L ${X(1.53)} ${Y(H-.82)} A ${.82*s} ${.82*s} 0 0 1 ${X(2.35)} ${Y(H)}`,fill:"none",stroke:muted,"stroke-width":1.2},svg);
+  el("rect",{x:X(0)-4,y:Y(0.92),width:8,height:.7*s,fill:v("--paper")},svg);
+  el("path",{d:`M ${X(0)} ${Y(.92)} L ${X(.7)} ${Y(.92)} A ${.7*s} ${.7*s} 0 0 1 ${X(0)} ${Y(1.62)}`,fill:"none",stroke:muted,"stroke-width":1.2},svg);
+  const T=(x,y,txt,cls,anchor)=>{const t=el("text",{x,y,class:cls||"bt","text-anchor":anchor||"middle"},svg);t.textContent=txt;return t;};
+  T(X(0.81),Y(0.72),"2 cubas · 1,40 m","bt");
+  T(X(0.81),Y(0.86),"espelho com LED","bt");
+  T(X(2.03),Y(0.9),"BOX","bt2");
+  T(X(W)+12,Y(0.4),"janela alta","bt","start"); T(X(W)+12,Y(0.54),"→ escada","bt","start");
+  T(X(W-0.68),Y(1.7),"vaso","bt","end");
+  T(X(0.1),Y(2.2),"toalheiro","bt","start");
+  T(X(1.94),Y(H)+22,"porta (quarto)","bt");
+  T(X(0)-10,Y(1.22),"porta","bt","end"); T(X(0)-10,Y(1.36),"(closet)","bt","end");
+  T(X(W/2),Y(0)-14,"2,53 m","bt2");
+  const vt=el("text",{x:0,y:0,class:"bt2","text-anchor":"middle",transform:`translate(${X(W)+44},${Y(2.0)}) rotate(90)`},svg);vt.textContent="2,82 m";
+}
+
+function drawSuite(){
+  // quarto do casal (versão final), coordenadas da planta (~85 px = 1 m)
+  const svg=document.getElementById("suiteplan"); svg.innerHTML="";
+  const c=getComputedStyle(document.documentElement), v=n=>c.getPropertyValue(n).trim();
+  const ink=v("--ink"), muted=v("--muted");
+  const Rr=(x,y,w,h,fill,stroke,sw,rx)=>el("rect",{x,y,width:w,height:h,fill,stroke:stroke||"none","stroke-width":sw||0,rx:rx||0},svg);
+  const T=(x,y,txt,cls,anchor)=>{const t=el("text",{x,y,class:cls||"bt","text-anchor":anchor||"middle"},svg);t.textContent=txt;return t;};
+  el("polygon",{points:"186,312 685,312 685,565 290,565",fill:"#D4B78F","fill-opacity":.4,stroke:ink,"stroke-width":6},svg);
+  Rr(300,340,250,180,"#ECE6DC",muted,1,4);
+  Rr(350,315,150,10,"#ECE6DC",ink,1.2,2); Rr(358,325,134,160,"#F4F0EA",ink,1.5,4); Rr(358,420,134,65,"#A69280","none",0,3);
+  Rr(316,318,36,28,"#F4F0EA",ink,1.2,2); Rr(498,318,36,28,"#F4F0EA",ink,1.2,2); el("circle",{cx:516,cy:332,r:6,fill:"#C7A158"},svg);
+  Rr(655,392,28,80,"#CDA676",ink,1.2,2); el("line",{x1:682,y1:402,x2:682,y2:462,stroke:"#1F1E1C","stroke-width":5},svg);
+  Rr(588,486,54,54,"#ECE6DC",ink,1.2,12); el("circle",{cx:570,cy:470,r:8,fill:"#CDA676",stroke:ink,"stroke-width":1},svg);
+  el("line",{x1:300,y1:565,x2:660,y2:565,stroke:v("--window"),"stroke-width":8},svg);
+  el("path",{d:"M302 553"+" q6 -6 12 0 t12 0".repeat(1)+" t12 0".repeat(28),fill:"none",stroke:muted,"stroke-width":1.6},svg);
+  el("line",{x1:302,y1:546,x2:658,y2:546,stroke:"#F3D29C","stroke-width":3,"stroke-dasharray":"2 4"},svg);
+  el("line",{x1:425,y1:488,x2:425,y2:543,stroke:muted,"stroke-width":1.2,"stroke-dasharray":"5 4"},svg);
+  // portas
+  Rr(195,308,60,8,v("--paper")); el("path",{d:"M195 312 L195 372 A60 60 0 0 0 255 312",fill:"none",stroke:muted,"stroke-width":1.2},svg);
+  Rr(600,308,70,8,v("--paper")); el("path",{d:"M600 312 L600 242 A70 70 0 0 1 670 312",fill:"none",stroke:muted,"stroke-width":1.2},svg);
+  Rr(681,320,8,60,v("--paper")); el("path",{d:"M685 380 L625 380 A60 60 0 0 1 685 320",fill:"none",stroke:muted,"stroke-width":1.2},svg);
+  T(425,400,"cama queen","bt2");
+  T(432,522,"≈1,0 m","bt","start");
+  T(225,300,"closet","bt"); T(635,300,"banho","bt");
+  T(695,345,"porta","bt","start"); T(695,359,"(foyer)","bt","start");
+  T(648,432,"TV","bt","end");
+  T(615,480,"poltrona","bt");
+  T(480,592,"janela ~3,6 m + cortina com sanca LED","bt");
+  T(236,450,"parede","bt","end"); T(236,464,"inclinada","bt","end");
+}
+
+function drawCloset(){
+  // closet (versão final), coordenadas da planta (~85 px = 1 m)
+  const svg=document.getElementById("closetplan"); svg.innerHTML="";
+  const c=getComputedStyle(document.documentElement), v=n=>c.getPropertyValue(n).trim();
+  const ink=v("--ink"), muted=v("--muted");
+  const R=(x,y,w,h,fill,stroke,sw,rx)=>el("rect",{x,y,width:w,height:h,fill,stroke:stroke||"none","stroke-width":sw||0,rx:rx||0},svg);
+  const T=(x,y,txt,cls,anchor)=>{const t=el("text",{x,y,class:cls||"bt","text-anchor":anchor||"middle"},svg);t.textContent=txt;return t;};
+  el("polygon",{points:"92,72 470,72 470,312 186,312",fill:"#D4B78F","fill-opacity":.4,stroke:ink,"stroke-width":6},svg);
+  el("polygon",{points:"94,74 468,74 468,123 113,123",fill:"#E8DED2",stroke:ink,"stroke-width":1.5},svg);
+  R(419,215,48,94,"#E8DED2",ink,1.5);
+  el("line",{x1:120,y1:118,x2:465,y2:118,stroke:"#F3D29C","stroke-width":3,"stroke-dasharray":"2 4"},svg);
+  el("line",{x1:425,y1:219,x2:425,y2:305,stroke:"#F3D29C","stroke-width":3,"stroke-dasharray":"2 4"},svg);
+  for(const x of [180,260,340,420]) el("circle",{cx:x,cy:121,r:3.5,fill:"#B8925A"},svg);
+  for(const y of [240,285]) el("circle",{cx:422,cy:y,r:3.5,fill:"#B8925A"},svg);
+  el("polygon",{points:"118,132 148,132 178,290 152,290",fill:"#CDA676",stroke:ink,"stroke-width":1.2},svg);
+  R(250,165,80,40,"#E8DED2",ink,1.2,3); R(254,169,72,32,"#C9D3D6","none",0,2);
+  R(280,285,100,24,"#CDA676",ink,1.2,2); el("line",{x1:282,y1:309,x2:378,y2:309,stroke:"#F3D29C","stroke-width":5},svg);
+  el("circle",{cx:330,cy:266,r:11,fill:"#9A6438"},svg);
+  R(466,150,8,60,v("--paper")); el("path",{d:"M470 150 L410 150 A60 60 0 0 0 470 210",fill:"none",stroke:muted,"stroke-width":1.2},svg);
+  R(195,308,60,8,v("--paper")); el("path",{d:"M195 312 L195 252 A60 60 0 0 1 255 312",fill:"none",stroke:muted,"stroke-width":1.2},svg);
+  T(290,100,"armário · cabideiros + maleiro (~4,1 m)","bt2");
+  T(290,158,"ilha com gavetas de vidro","bt");
+  T(186,232,"sapateira","bt","start"); T(186,246,"+ banco","bt","start");
+  T(412,262,"armário","bt","end");
+  T(480,175,"porta","bt","start"); T(480,189,"(banho)","bt","start");
+  T(225,330,"porta (quarto)","bt");
+  T(345,346,"espelho LED + penteadeira","bt");
+  T(290,60,"parede do vizinho","bt");
+}
+
+function drawStatus(){
+  const R=roomsFor("D"), box=document.getElementById("status");
+  for(const id of ["circ","sala","suite","banho","closet","kids","brinq","esc","bsoc","lav"]){
+    const d=document.createElement("div");d.className="rs";
+    d.innerHTML=`<span>${R[id].n}</span>${(STYLE_OK[id]||R[id].styleOk)?'<span class="pill ok">Definido</span>':'<span class="pill wait">Falta referência</span>'}`;
+    box.appendChild(d);
+  }
+}
+
+try{const s=localStorage.getItem("layout");if(s&&LAYOUTS[s])cur=s;}catch(e){}
+document.getElementById("refimg").src="ref-banho.jpg";
+document.getElementById("refquarto").src="ref-quarto.jpg";
+document.getElementById("refcloset").src="ref-closet.jpg";
+document.getElementById("refportico").src="ref-portico.jpg";
+document.getElementById("refsala").src="ref-sala.jpg";
+document.getElementById("refesc").src="ref-escritorio.jpg";
+document.getElementById("refkids").src="ref-kids.jpg";
+document.getElementById("refbrinq").src="ref-brinq.jpg";
+render();drawBath();drawSuite();drawCloset();drawStatus();
+window.matchMedia("(prefers-color-scheme: dark)").addEventListener("change",()=>{document.getElementById("bathplan").innerHTML="";drawBath();});
+</script>
