@@ -1,0 +1,62 @@
+name: LinkedIn - gerar rascunho
+
+on:
+  schedule:
+    # Toda terça às 9h (horário de Brasília = 12h UTC)
+    - cron: "0 12 * * 2"
+  workflow_dispatch:
+    inputs:
+      tema_extra:
+        description: "Direcionamento opcional para este post"
+        required: false
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  gerar:
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r linkedin/requirements.txt
+
+      - name: Garantir etiquetas
+        run: |
+          gh label create linkedin-rascunho --color 0A66C2 --description "Rascunho de post para o LinkedIn" --force
+          gh label create aprovado --color 2DA44E --description "Adicione para publicar no LinkedIn" --force
+
+      - name: Gerar post com Claude
+        env:
+          ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
+          TEMA_EXTRA: ${{ github.event.inputs.tema_extra }}
+        run: |
+          export POSTS_ANTERIORES="$(gh issue list --label linkedin-rascunho --state all --limit 15 --json title --jq '.[].title')"
+          python linkedin/gerar_post.py rascunho.md
+
+      - name: Abrir issue para aprovação
+        run: |
+          TITULO="$(cat rascunho.md.titulo)"
+          FONTE="$(cat rascunho.md.fonte)"
+          {
+            echo "## ✍️ Rascunho para o LinkedIn"
+            echo
+            echo "**Para publicar:** adicione a etiqueta \`aprovado\` nesta issue."
+            echo "**Para ajustar:** edite o texto entre os marcadores abaixo antes de aprovar."
+            echo "**Para descartar:** apenas feche a issue."
+            echo
+            echo "Fonte pesquisada: ${FONTE:-não informada}"
+            echo
+            echo "<!-- POST_INICIO -->"
+            cat rascunho.md
+            echo "<!-- POST_FIM -->"
+          } > corpo.md
+          gh issue create --title "LinkedIn: $TITULO" --label linkedin-rascunho --body-file corpo.md
