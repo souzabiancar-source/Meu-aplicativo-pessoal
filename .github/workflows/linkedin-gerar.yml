@@ -2,12 +2,17 @@ name: LinkedIn - gerar rascunho
 
 on:
   schedule:
-    # Toda terça às 9h (horário de Brasília = 12h UTC)
+    # Toda terça às 9h (horário de Brasília = 12h UTC).
+    # O Atalho do iPhone dispara às 8h com as fotos; este horário é o plano B
+    # caso o celular não rode o Atalho (ele é ignorado se já houver rascunho).
     - cron: "0 12 * * 2"
   workflow_dispatch:
     inputs:
       tema_extra:
         description: "Direcionamento opcional para este post"
+        required: false
+      eventos:
+        description: "Descrições das fotos da semana (preenchido pelo Atalho do iPhone)"
         required: false
 
 permissions:
@@ -21,31 +26,51 @@ jobs:
       GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       GH_REPO: ${{ github.repository }}
     steps:
+      - name: Pular se o Atalho já gerou o rascunho de hoje
+        id: checar
+        if: github.event_name == 'schedule'
+        run: |
+          DESDE="$(date -u -d '20 hours ago' +%Y-%m-%dT%H:%M:%S)"
+          N="$(gh issue list --label linkedin-rascunho --state all --search "created:>=$DESDE" --json number --jq length 2>/dev/null || echo 0)"
+          if [ "$N" -gt 0 ]; then echo "pular=true" >> "$GITHUB_OUTPUT"; echo "Rascunho recente já existe, pulando."; fi
+
       - uses: actions/checkout@v4
+        if: steps.checar.outputs.pular != 'true'
 
       - uses: actions/setup-python@v5
+        if: steps.checar.outputs.pular != 'true'
         with:
           python-version: "3.12"
 
       - run: pip install -r linkedin/requirements.txt
+        if: steps.checar.outputs.pular != 'true'
 
       - name: Garantir etiquetas
+        if: steps.checar.outputs.pular != 'true'
         run: |
           gh label create linkedin-rascunho --color 0A66C2 --description "Rascunho de post para o LinkedIn" --force
           gh label create aprovado --color 2DA44E --description "Adicione para publicar no LinkedIn" --force
 
       - name: Gerar post com Claude
+        if: steps.checar.outputs.pular != 'true'
         env:
           ANTHROPIC_API_KEY: ${{ secrets.ANTHROPIC_API_KEY }}
           TEMA_EXTRA: ${{ github.event.inputs.tema_extra }}
+          EVENTOS: ${{ github.event.inputs.eventos }}
         run: |
           export POSTS_ANTERIORES="$(gh issue list --label linkedin-rascunho --state all --limit 15 --json title --jq '.[].title')"
           python linkedin/gerar_post.py rascunho.md
 
       - name: Abrir issue para aprovação
+        if: steps.checar.outputs.pular != 'true'
         run: |
           TITULO="$(cat rascunho.md.titulo)"
           FONTE="$(cat rascunho.md.fonte)"
+          case "$(cat rascunho.md.origem)" in
+            evento) ORIGEM="📸 Evento identificado nas suas fotos — complete os trechos entre [colchetes]" ;;
+            ideia)  ORIGEM="💬 Ideia das suas conversas (linkedin/contexto/ideias.md)" ;;
+            *)      ORIGEM="📰 Novidade de tecnologia e inovação" ;;
+          esac
           {
             echo "## ✍️ Rascunho para o LinkedIn"
             echo
@@ -53,7 +78,8 @@ jobs:
             echo "**Para ajustar:** edite o texto entre os marcadores abaixo antes de aprovar."
             echo "**Para descartar:** apenas feche a issue."
             echo
-            echo "Fonte pesquisada: ${FONTE:-não informada}"
+            echo "**Origem:** $ORIGEM"
+            echo "**Fonte:** ${FONTE:-não informada}"
             echo
             echo "<!-- POST_INICIO -->"
             cat rascunho.md

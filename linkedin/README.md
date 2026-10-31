@@ -1,7 +1,12 @@
 # Posts automáticos no LinkedIn
 
-Toda **terça às 9h** (Brasília) o Claude pesquisa uma novidade recente sobre
-**inovação**, escreve um post no seu estilo e abre uma **issue** neste
+Toda **terça de manhã** o Claude escolhe um assunto nesta ordem:
+
+1. 📸 **Evento nas suas fotos**: um Atalho do iPhone descreve as fotos da semana ([guia](atalho-iphone.md));
+2. 💬 **Ideias das suas conversas**: anotadas em [`contexto/ideias.md`](contexto/ideias.md);
+3. 📰 **Últimas novidades de tecnologia e inovação**: pesquisadas na web.
+
+Depois escreve um post no seu estilo e abre uma **issue** neste
 repositório com o rascunho. Você revisa e, se gostar, adiciona a etiqueta
 **`aprovado`**: o post é publicado no seu perfil e a issue é fechada com o link.
 
@@ -28,7 +33,10 @@ Crie em <https://platform.claude.com/settings/keys> e salve como secret
 > ⚠️ O token do LinkedIn **expira em 60 dias**. Quando vencer, a publicação
 > falha com uma mensagem avisando; basta gerar outro e atualizar o secret.
 
-### 3. Personalize sua voz
+### 3. Atalho do iPhone (fotos)
+Siga o [guia do Atalho](atalho-iphone.md). É opcional: sem ele, o gerador usa as ideias e as novidades.
+
+### 4. Personalize sua voz
 Edite [`perfil.md`](perfil.md) — principalmente a seção **"Quem eu sou"**.
 
 ## Uso no dia a dia

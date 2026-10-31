@@ -5,6 +5,8 @@ Saída: escreve o texto do post em `rascunho.md` (ou no caminho passado como
   ANTHROPIC_API_KEY   chave da API da Anthropic (obrigatória)
   POSTS_ANTERIORES    lista (uma por linha) de títulos já usados, para evitar repetição
   TEMA_EXTRA          (opcional) direcionamento específico para este post
+  EVENTOS             (opcional) descrições das fotos da semana, enviadas pelo Atalho do iPhone
+Também lê linkedin/contexto/ideias.md (ideias anotadas nas conversas).
 """
 
 import datetime
@@ -20,11 +22,25 @@ PASTA = pathlib.Path(__file__).parent
 INICIO, FIM = "<<<POST>>>", "<<<FIM>>>"
 
 
+def ler_ideias() -> str:
+    arquivo = PASTA / "contexto" / "ideias.md"
+    if not arquivo.exists():
+        return ""
+    conteudo = re.sub(r"<!--.*?-->", "", arquivo.read_text(encoding="utf-8"), flags=re.S)
+    linhas = [
+        l.strip() for l in conteudo.splitlines()
+        if l.strip().startswith("- ") and "[usado]" not in l
+    ]
+    return "\n".join(linhas[-20:])
+
+
 def montar_prompt() -> str:
     perfil = (PASTA / "perfil.md").read_text(encoding="utf-8")
     hoje = datetime.date.today().strftime("%d/%m/%Y")
     anteriores = os.environ.get("POSTS_ANTERIORES", "").strip() or "(nenhum ainda)"
     extra = os.environ.get("TEMA_EXTRA", "").strip()
+    fotos = os.environ.get("EVENTOS", "").strip() or "(nenhuma foto enviada esta semana)"
+    ideias = ler_ideias() or "(nenhuma ideia anotada)"
 
     return f"""Você é ghostwriter de LinkedIn. Hoje é {hoje}.
 
@@ -32,17 +48,43 @@ Escreva UM post de LinkedIn em português do Brasil seguindo este perfil editori
 
 {perfil}
 
-Antes de escrever, pesquise na web uma notícia, tendência ou caso real e recente
-(últimas semanas) sobre inovação que renda uma boa reflexão. Use apenas fontes
-confiáveis e não invente números.
+## Escolha do assunto — siga esta ordem de prioridade
 
-Assuntos dos posts anteriores (NÃO repita estes ângulos):
+1. EVENTO NAS FOTOS. Abaixo estão descrições (data, local, conteúdo) das fotos
+   tiradas pela autora nos últimos 7 dias. Avalie se alguma indica participação
+   em um evento profissional (congresso, palestra, workshop, feira, meetup,
+   hackathon, curso, visita técnica, premiação — sinais: palco, plateia, crachá,
+   slides, estandes, banners). Fotos pessoais (família, comida, lazer, documentos)
+   devem ser ignoradas e nunca mencionadas. Se houver evento, o post é sobre essa
+   experiência, em primeira pessoa. Use só o que as fotos mostram; o que não
+   souber (nome do evento, palestrante, aprendizado específico) deixe como
+   marcador entre colchetes, ex.: [nome do evento], para a autora completar.
+   Pesquise na web o tema do evento para enriquecer o post com contexto atual.
+
+2. IDEIAS DAS CONVERSAS. Se não houver evento, escolha a ideia mais promissora
+   da lista abaixo (que ainda não tenha virado post) e desenvolva-a, buscando na
+   web uma novidade recente que a conecte com tecnologia e inovação.
+
+3. NOVIDADES. Se não houver nada aproveitável acima, pesquise na web as últimas
+   atualizações de tecnologia e inovação (últimas 1–2 semanas) e escolha a que
+   renda a melhor reflexão para o público do perfil.
+
+Use apenas fontes confiáveis e não invente números, nomes ou fatos.
+
+### Descrições das fotos da semana
+{fotos}
+
+### Ideias anotadas nas conversas
+{ideias}
+
+### Assuntos dos posts anteriores (NÃO repita estes ângulos)
 {anteriores}
-{f"Direcionamento para este post: {extra}" if extra else ""}
+{f"{chr(10)}### Direcionamento extra para este post{chr(10)}{extra}" if extra else ""}
 
 Responda exatamente neste formato:
+ORIGEM: <evento | ideia | novidade>
 TITULO: <resumo do assunto em até 8 palavras>
-FONTE: <URL principal que você usou>
+FONTE: <URL principal que você usou, ou "fotos" se não houver>
 {INICIO}
 <texto final do post, pronto para publicar, sem markdown (sem **negrito** nem # títulos)>
 {FIM}"""
@@ -82,6 +124,7 @@ def main() -> None:
     texto = gerar()
     titulo = re.search(r"TITULO:\s*(.+)", texto)
     fonte = re.search(r"FONTE:\s*(\S+)", texto)
+    origem = re.search(r"ORIGEM:\s*(\S+)", texto)
     post = texto.split(INICIO, 1)[1].split(FIM, 1)[0].strip()
 
     saida = pathlib.Path(sys.argv[1] if len(sys.argv) > 1 else "rascunho.md")
@@ -91,6 +134,9 @@ def main() -> None:
     )
     pathlib.Path(str(saida) + ".fonte").write_text(
         (fonte.group(1).strip() if fonte else ""), encoding="utf-8"
+    )
+    pathlib.Path(str(saida) + ".origem").write_text(
+        (origem.group(1).strip() if origem else "novidade"), encoding="utf-8"
     )
     print(post)
 
