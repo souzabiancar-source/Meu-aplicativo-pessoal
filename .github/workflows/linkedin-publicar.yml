@@ -1,0 +1,54 @@
+name: LinkedIn - publicar aprovado
+
+on:
+  issues:
+    types: [labeled]
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  publicar:
+    if: >-
+      github.event.label.name == 'aprovado' &&
+      contains(github.event.issue.labels.*.name, 'linkedin-rascunho') &&
+      github.event.issue.state == 'open'
+    runs-on: ubuntu-latest
+    env:
+      GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      GH_REPO: ${{ github.repository }}
+      ISSUE: ${{ github.event.issue.number }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - run: pip install -r linkedin/requirements.txt
+
+      - name: Extrair texto aprovado
+        run: |
+          # Lê o corpo atual da issue (inclui edições feitas antes de aprovar)
+          gh issue view "$ISSUE" --json body --jq .body \
+            | sed -n '/<!-- POST_INICIO -->/,/<!-- POST_FIM -->/p' \
+            | sed '1d;$d' > post.txt
+          test -s post.txt || { echo "Marcadores POST_INICIO/POST_FIM não encontrados"; exit 1; }
+
+      - name: Publicar no LinkedIn
+        id: pub
+        env:
+          LINKEDIN_ACCESS_TOKEN: ${{ secrets.LINKEDIN_ACCESS_TOKEN }}
+          LINKEDIN_PERSON_URN: ${{ secrets.LINKEDIN_PERSON_URN }}
+        run: echo "url=$(python linkedin/publicar_post.py post.txt)" >> "$GITHUB_OUTPUT"
+
+      - name: Registrar e fechar
+        run: |
+          gh issue comment "$ISSUE" --body "✅ Publicado no LinkedIn: ${{ steps.pub.outputs.url }}"
+          gh issue close "$ISSUE" --reason completed
+
+      - name: Avisar falha
+        if: failure()
+        run: |
+          gh issue comment "$ISSUE" --body "❌ Falha ao publicar. Veja o log: ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }} — corrija e adicione a etiqueta \`aprovado\` de novo (remova e adicione)."
