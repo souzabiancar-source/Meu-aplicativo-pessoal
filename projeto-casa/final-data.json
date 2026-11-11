@@ -107,14 +107,14 @@
    "hide": true
   },
   "bsoc": {
-   "n": "Banho do casal",
-   "a": "\u22484,8 m\u00b2",
-   "p": "685,898 960,898 960,1025 685,1025",
+   "n": "Banho casal",
+   "a": "4,20 m\u00b2",
+   "p": "685,775 820,775 820,1025 685,1025",
    "l": [
-    835,
-    965
+    752,
+    915
    ],
-   "note": "Banheiro horizontal com box junto \u00e0 janela do vazio, bancada de duas cubas e vaso. Porta para o quarto do casal.",
+   "note": "Banheiro que j\u00e1 est\u00e1 constru\u00eddo, na vertical (\u22481,6 \u00d7 2,9 m), com janela para o vazio. A porta continua onde est\u00e1, na parede de cima, mas passa a abrir para dentro da su\u00edte, n\u00e3o para a sala. D\u00e1 para reformar com o estilo da refer\u00eancia sem mexer na hidr\u00e1ulica.",
    "chg": true,
    "styleOk": true
   },
@@ -126,7 +126,7 @@
     1040,
     905
    ],
-   "note": "Quarto do casal com a janela da fachada. Cama queen com a cabeceira na parede do vizinho, poltrona junto \u00e0 janela, portas para o closet e o banho na parede da esquerda e porta de entrada para a sala.",
+   "note": "Quarto do casal com a janela da fachada (\u224814,4 m\u00b2). Cama queen na parede do vizinho, poltrona junto \u00e0 janela, porta para a sala e porta para o closet, que leva ao banheiro.",
    "chg": true
   },
   "telhado": {
@@ -177,15 +177,15 @@
   },
   "lavabo": {
    "n": "Closet do casal",
-   "a": "\u22488,5 m\u00b2",
-   "p": "685,700 1050,700 1050,780 960,780 960,898 685,898",
+   "a": "\u22488,7 m\u00b2",
+   "p": "685,700 1050,700 1050,780 960,780 960,1025 820,1025 820,775 685,775",
    "l": [
-    860,
-    788
+    880,
+    738
    ],
    "hide": false,
    "styleOk": true,
-   "note": "Onde eram o escrit\u00f3rio e o lavabo. Arm\u00e1rios em L na parede da sala e na parede da janela, ilha no meio e janela para o vazio. Porta s\u00f3 para o quarto do casal.",
+   "note": "Closet em L: corredor ao longo da parede da sala que leva \u00e0 porta do banheiro, e trecho largo ao lado do banho com arm\u00e1rio alto na parede do banheiro e gaveteiro na parede do quarto. Porta para o quarto.",
    "chg": true
   },
   "ext": {
@@ -454,55 +454,6 @@
    "Poltr."
   ],
   [
-   688,
-   703,
-   359,
-   45,
-   "Arm\u00e1rios"
-  ],
-  [
-   688,
-   765,
-   26,
-   90,
-   ""
-  ],
-  [
-   690,
-   857,
-   265,
-   38,
-   "Gaveteiro"
-  ],
-  [
-   790,
-   790,
-   90,
-   35,
-   "Ilha"
-  ],
-  [
-   790,
-   901,
-   3,
-   121,
-   ""
-  ],
-  [
-   795,
-   995,
-   102,
-   27,
-   "Cubas"
-  ],
-  [
-   826,
-   901,
-   32,
-   34,
-   ""
-  ],
-  [
    475,
    75,
    120,
@@ -563,6 +514,41 @@
    286,
    209,
    24,
+   ""
+  ],
+  [
+   770,
+   782,
+   47,
+   70,
+   "Pia"
+  ],
+  [
+   785,
+   880,
+   32,
+   34,
+   ""
+  ],
+  [
+   688,
+   945,
+   129,
+   3,
+   ""
+  ],
+  [
+   823,
+   780,
+   50,
+   242,
+   "Arm\u00e1rio"
+  ],
+  [
+   963,
+   703,
+   84,
+   40,
    ""
   ]
  ],
@@ -631,26 +617,14 @@
    ""
   ],
   [
-   960,
-   940,
-   960,
-   1010,
-   ""
+   735,
+   775,
+   800,
+   775,
+   "porta existente"
   ]
  ],
  "win": [
-  [
-   680,
-   720,
-   680,
-   880
-  ],
-  [
-   680,
-   905,
-   680,
-   1010
-  ],
   [
    300,
    565,
@@ -662,6 +636,12 @@
    150,
    950,
    150
+  ],
+  [
+   680,
+   720,
+   680,
+   770
   ]
  ],
  "base_win": [
@@ -808,26 +788,26 @@
    685,
    720,
    685,
-   880,
+   770,
    "j"
   ],
   [
    685,
-   880,
+   770,
    685,
-   905,
+   828,
    "w"
   ],
   [
    685,
-   905,
+   828,
    685,
-   1010,
+   880,
    "j"
   ],
   [
    685,
-   1010,
+   880,
    685,
    1025,
    "w"
@@ -1060,27 +1040,27 @@
    960,
    870,
    960,
-   898,
+   1025,
    "w"
   ],
   [
    685,
-   898,
-   960,
-   898,
+   775,
+   735,
+   775,
    "w"
   ],
   [
-   960,
-   898,
-   960,
-   940,
+   800,
+   775,
+   820,
+   775,
    "w"
   ],
   [
-   960,
-   1010,
-   960,
+   820,
+   775,
+   820,
    1025,
    "w"
   ]

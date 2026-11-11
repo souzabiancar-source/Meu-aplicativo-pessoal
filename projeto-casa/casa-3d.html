@@ -30,7 +30,7 @@ h1{font:700 clamp(24px,4vw,34px)/1.15 var(--f-display);margin:0;text-wrap:balanc
 </style>
 
 <div class="wrap">
-  <span class="eyebrow">Versão final (N) · hall em L · maquete aproximada</span>
+  <span class="eyebrow">Versão final (P) · hall em L e banheiro existente · maquete aproximada</span>
   <h1>Nossa Casa em 3D</h1>
   <p class="lede">Arraste para girar, use dois dedos ou a rolagem para aproximar. As medidas vêm da planta, e os móveis e as cores seguem as referências de cada ambiente.</p>
   <div class="bar" role="group" aria-label="Vistas">
@@ -106,8 +106,8 @@ floor(P("543,312 685,312 685,385 543,385"),WOOD); // vestíbulo
 floor(P("500,385 685,385 685,565 500,565"),0xE9E4DC); // banho das crianças
 floor(P("850,150 1020,150 1020,305 850,305"),0xDCD8D0); // lavanderia
 floor(P("685,305 1385,305 1385,780 1050,780 1050,700 685,700"),WOOD); // social
-floor(P("685,700 1050,700 1050,780 960,780 960,898 685,898"),0xDCC4A0); // closet do casal
-floor(P("685,898 960,898 960,1025 685,1025"),0xE4DACB); // banho do casal
+floor(P("685,700 1050,700 1050,780 960,780 960,1025 820,1025 820,775 685,775"),0xDCC4A0); // closet do casal
+floor(P("685,775 820,775 820,1025 685,1025"),0xE4DACB); // banho do casal (existente)
 floor(P("960,780 1385,780 1385,1025 960,1025"),WOOD); // quarto do casal
 floor(P("285,565 685,565 685,700 330,700"),0xB7BCA6);                     // telhado
 floor(P("1030,150 1550,150 1550,1040 1395,1040 1395,305 1030,305"),0xD3CFC6,-0.01); // área roxa
@@ -123,7 +123,7 @@ for(let i=0;i<8;i++){const x1=690+i*70; box(x1,66,x1+70,146,-0.6,-(i*0.3)-0.02,0
 const WALLS=[
  [92,72,685,72,"w"],[92,72,290,565,"w"],
  [290,565,310,565,"w"],[310,565,490,565,"j"],[490,565,560,565,"w"],[560,565,660,565,"j"],[660,565,685,565,"w"],
- [685,72,685,78,"w"],[685,144,685,150,"w"],[685,230,685,320,"w"],[685,380,685,585,"w"],[685,585,685,680,"j"],[685,680,685,720,"w"],[685,720,685,880,"j"],[685,880,685,905,"w"],[685,905,685,1010,"j"],[685,1010,685,1025,"w"],
+ [685,72,685,78,"w"],[685,144,685,150,"w"],[685,230,685,320,"w"],[685,380,685,585,"w"],[685,585,685,680,"j"],[685,680,685,720,"w"],[685,720,685,770,"j"],[685,770,685,828,"w"],[685,828,685,880,"j"],[685,880,685,1025,"w"],
  [470,72,470,110,"w"],[470,180,470,312,"w"],[470,230,520,230,"w"],[580,230,685,230,"w"],[186,312,685,312,"w"],
  [543,312,543,320,"w"],[543,380,543,385,"w"],[500,385,560,385,"w"],[625,385,685,385,"w"],[500,385,500,400,"w"],[500,465,500,565,"w"],
  [685,150,880,150,"w"],[880,150,950,150,"j"],[950,150,1020,150,"w"],[850,150,850,175,"w"],[850,250,850,305,"w"],[1020,150,1020,305,"w"],[850,305,1020,305,"w"],
@@ -131,7 +131,7 @@ const WALLS=[
  [1385,305,1385,315,"w"],[1385,315,1385,500,"j"],[1385,500,1385,525,"w"],[1385,525,1385,760,"j"],[1385,760,1385,800,"w"],[1385,800,1385,1020,"j"],[1385,1020,1385,1025,"w"],
  [685,1025,1385,1025,"w"],
  [685,700,1050,700,"w"],[1050,700,1050,780,"w"],[960,780,1058,780,"w"],[1110,780,1385,780,"w"],
- [960,780,960,800,"w"],[960,870,960,898,"w"],[685,898,960,898,"w"],[960,898,960,940,"w"],[960,1010,960,1025,"w"]
+ [960,780,960,800,"w"],[960,870,960,1025,"w"],[685,775,735,775,"w"],[800,775,820,775,"w"],[820,775,820,1025,"w"]
 ];
 const wallGroup=new THREE.Group(); scene.add(wallGroup);
 const WALLC=0xF1EDE6, GLASS=M(0x9CC3DA,{transparent:true,opacity:.35,roughness:.1});
@@ -150,7 +150,7 @@ function buildWalls(full){
       if(full){ seg(a,b,c,d,.9,2.2,GLASS); seg(a,b,c,d,2.2,H,wm);} else if(top>.9) seg(a,b,c,d,.9,top,GLASS); }
   }
   // portas: verga por cima quando a parede está inteira
-  if(full) for(const [a,b,c,d] of [[685,78,685,144],[850,175,850,250],[470,110,470,180],[520,230,580,230],[685,320,685,380],[543,320,543,380],[560,385,625,385],[500,400,500,465],[1058,780,1110,780],[960,800,960,870],[960,940,960,1010]]) seg(a,b,c,d,2.1,H,wm);
+  if(full) for(const [a,b,c,d] of [[685,78,685,144],[850,175,850,250],[470,110,470,180],[520,230,580,230],[685,320,685,380],[543,320,543,380],[560,385,625,385],[500,400,500,465],[1058,780,1110,780],[960,800,960,870],[735,775,800,775]]) seg(a,b,c,d,2.1,H,wm);
   for(const [x,y] of [[1047,313],[1047,527],[1047,780]]){const p=box(x-12,y-12,x+12,y+12,0,full?H:LOW+.02,x===1047&&y===527?0x8A6A4C:WALLC,wallGroup);}
 }
 
@@ -206,14 +206,12 @@ box(688,450,714,680,0,0.9,WHITE); for(let k=0;k<4;k++) box(690,460+k*55,712,505+
 {const s=new THREE.Mesh(new THREE.SphereGeometry(.38,24,16),M(0xE9DFC9)); s.position.set(X(760),.27,Z(625)); s.scale.y=.7; s.castShadow=true; scene.add(s);}
 box(770,500,825,555,0,0.5,WHITE); box(720,470,860,690,0.003,0.014,0xF2ECE2);
 // closet do casal
-box(688,703,1047,748,0,2.4,0xE8DED2); box(690,857,955,895,0,0.9,0xE8DED2);
-box(688,765,714,855,0.72,0.78,FREIJO); cyl(730,810,.18,0,.45,0x9A6438);
-box(790,790,880,825,0,0.9,0xE8DED2); box(790,790,880,825,0.9,0.92,0xC9D3D6,null,{roughness:.15,metalness:.3});
-box(940,872,957,876,0.3,2.0,0xC9D3D6,null,{roughness:.15,metalness:.4});
-// banho do casal
-box(790,901,793,1022,0,2.0,0xAFC6D2,null,{transparent:true,opacity:.4,roughness:.1}); box(688,901,790,1022,0,0.02,0xD9CFBF);
-box(795,995,897,1022,0.35,0.88,GREIGE); box(795,995,897,1022,0.88,0.92,0xF3EFE8); box(797,1020,895,1023,1.0,1.9,0xC9D3D6,null,{roughness:.15,metalness:.4});
-box(826,899,858,906,0,0.8,0xF3EFE8); box(830,906,854,935,0,0.4,0xF3EFE8);
+box(823,780,873,1022,0,2.4,0xE8DED2); box(963,703,1047,743,0,0.9,0xE8DED2);
+box(954,885,957,1018,0.3,2.0,0xC9D3D6,null,{roughness:.15,metalness:.4}); cyl(930,840,.18,0,.45,0x9A6438);
+// banho do casal (existente, vertical)
+box(770,782,817,852,0.35,0.88,GREIGE); box(770,782,817,852,0.88,0.92,0xF3EFE8); box(815,785,818,850,1.0,1.9,0xC9D3D6,null,{roughness:.15,metalness:.4});
+box(785,880,808,914,0,0.42,0xF3EFE8); box(808,880,818,914,0,0.8,0xF3EFE8);
+box(688,945,817,948,0,2.0,0xAFC6D2,null,{transparent:true,opacity:.4,roughness:.1}); box(688,948,817,1022,0,0.02,0xD9CFBF);
 // quarto do casal
 box(1120,880,1316,1022,0.003,0.012,OFF);
 box(1143,1013,1293,1023,0,1.1,OFF); box(1150,853,1286,1013,0,0.52,0xF4F0EA); box(1150,853,1286,913,0.52,0.56,0xA69280);
@@ -232,12 +230,12 @@ function label(txt,px,py){
   const s=new THREE.Sprite(new THREE.SpriteMaterial({map:tex,depthTest:false,transparent:true,sizeAttenuation:false})); s.scale.set(.15,.0375,1); s.position.set(X(px),3.1,Z(py)); s.renderOrder=10; labelGroup.add(s);
 }
 [["Quarto crianças",380,440],["Escritório",280,180],["Despensa",578,272],["Hall",640,150],["Vestíbulo",614,350],["Banho crianças",592,470],["Lavanderia",935,225],["Cozinha",1100,400],["Jantar",1312,420],["Foyer",800,380],["Estar",1200,660],
- ["Leitura",770,580],["Closet casal",860,800],["Banho casal",835,965],["Quarto casal",1050,905],["Telhado",480,630],["Escada",970,105]].forEach(a=>label(...a));
+ ["Leitura",770,580],["Closet casal",880,740],["Banho casal",752,900],["Quarto casal",1050,905],["Telhado",480,630],["Escada",970,105]].forEach(a=>label(...a));
 
 // vistas
 const VIEWS={
   geral:{p:[2,13,13],t:[0,0,0]}, entrada:{p:[X(820),1.6,Z(108)],t:[X(400),1.2,Z(160)]},
-  sala:{p:[X(1700),4.2,Z(700)],t:[X(1080),0.4,Z(470)]}, suite:{p:[X(1150),6.5,Z(1420)],t:[X(1050),0.4,Z(880)]},
+  sala:{p:[X(1700),4.2,Z(700)],t:[X(1080),0.4,Z(470)]}, suite:{p:[X(1500),7,Z(1250)],t:[X(930),0.4,Z(860)]},
   kids:{p:[X(400),6.5,Z(850)],t:[X(400),0.4,Z(430)]}, esc:{p:[X(300),7,Z(560)],t:[X(290),0.4,Z(190)]}
 };
 let anim=null;
