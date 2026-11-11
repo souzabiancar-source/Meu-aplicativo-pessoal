@@ -61,16 +61,17 @@ for x1, y1, x2, y2, kind in d["walls"]:
 
 # portas: [x1,y1,x2,y2, sentido de abertura em px (dx,dy), tipo]
 DOORS = [
-    (700, 150, 802, 150, (0, 1), "pivotante"),   # entrada
+    (685, 78, 685, 144, (-1, 0), "entrada"),     # entrada, de frente para a escada
     (850, 175, 850, 250, None, "correr"),        # lavanderia
-    (685, 320, 685, 380, (-1, 0), "giro"),       # foyer → quarto do casal
-    (195, 312, 255, 312, (0, -1), "giro"),       # quarto → closet
-    (600, 312, 670, 312, (0, -1), "giro"),       # quarto → banho
-    (470, 150, 470, 210, (-1, 0), "giro"),       # banho → closet
-    (700, 700, 770, 700, (0, 1), "giro"),        # escritório
-    (975, 700, 1040, 700, (0, 1), "giro"),       # lavabo
-    (1058, 780, 1110, 780, (0, 1), "giro"),      # quarto das crianças
-    (1050, 950, 1050, 1020, (-1, 0), "giro"),    # banho das crianças
+    (470, 110, 470, 180, (-1, 0), "giro"),       # hall → escritório
+    (520, 230, 580, 230, (0, 1), "giro"),        # hall → despensa
+    (685, 320, 685, 380, (-1, 0), "giro"),       # foyer → vestíbulo
+    (543, 320, 543, 380, (-1, 0), "giro"),       # vestíbulo → quarto das crianças
+    (560, 385, 625, 385, (0, 1), "giro"),        # vestíbulo → banho das crianças
+    (500, 400, 500, 465, (1, 0), "giro"),        # quarto das crianças → banho
+    (1058, 780, 1110, 780, (0, 1), "giro"),      # sala → quarto do casal
+    (960, 800, 960, 870, (-1, 0), "giro"),       # quarto do casal → closet
+    (960, 940, 960, 1010, None, "correr"),       # quarto do casal → banho
 ]
 for x1, y1, x2, y2, sw, kind in DOORS:
     (ax, ay), (bx, by) = P(x1, y1), P(x2, y2)
@@ -91,9 +92,9 @@ for x1, y1, x2, y2, sw, kind in DOORS:
     if end - start > 180:
         start, end = end, start + 360
     msp.add_arc((ax, ay), w, start, end, dxfattribs={"layer": "ARQ-PORTA"})
-    if kind == "pivotante":
-        msp.add_text("PORTA PIVOTANTE 1200x2400", height=90, dxfattribs={"layer": "ARQ-PORTA"}).set_placement(
-            ((ax + bx) / 2, ay + 250), align=TextEntityAlignment.MIDDLE_CENTER)
+    if kind == "entrada":
+        msp.add_text("PORTA DE ENTRADA ~900x2400", height=90, dxfattribs={"layer": "ARQ-PORTA"}).set_placement(
+            (ax + 1300, (ay + by) / 2), align=TextEntityAlignment.MIDDLE_CENTER)
 
 # pórtico de madeira (projeção, acima)
 pa, pb = d["portal"]
@@ -105,7 +106,7 @@ msp.add_text("PÓRTICO DE MADEIRA (PROJEÇÃO)", height=80, dxfattribs={"layer":
     ((ax + bx) / 2, ay - 260), align=TextEntityAlignment.MIDDLE_CENTER)
 
 # ambientes: nome, área e polígono
-NAMES = {"banho": "BANHO DO CASAL", "telhado": "TELHADO (NÍVEL DO PISO)", "ext": "ÁREA EXTERNA (A CONFIRMAR)",
+NAMES = {"telhado": "TELHADO (NÍVEL DO PISO)", "ext": "ÁREA EXTERNA (A CONFIRMAR)",
          "escada": "ESCADA - DESCE P/ QUINTAL", "sala": "ESTAR / JANTAR / COZINHA"}
 for key, r in d["rooms"].items():
     if r.get("hide"):
@@ -163,7 +164,7 @@ dim(P(186, 312), P(685, 312), (0, P(0, 312)[1] + 350))
 
 # carimbo
 bx0, by0 = P(1450, 1180)
-lines = ["NOSSA CASA - PLANTA DE LAYOUT", "VERSÃO FINAL (L)", "ESCALA SUGERIDA 1:50  |  UNIDADE: MILÍMETROS",
+lines = ["NOSSA CASA - PLANTA DE LAYOUT", "VERSÃO FINAL (N) - HALL EM L", "ESCALA SUGERIDA 1:50  |  UNIDADE: MILÍMETROS",
          "Medidas aproximadas, tiradas do croqui enviado.", "Conferir em obra e com o arquiteto antes de executar."]
 for i, txt in enumerate(lines):
     msp.add_text(txt, height=160 if i == 0 else 110, dxfattribs={"layer": "ARQ-CARIMBO"}).set_placement((bx0 - 9000, by0 - i * 230))
