@@ -1041,7 +1041,31 @@ LAYOUTS.Q={k:"Q",t:"Alternativa: quarto maior",sub:"Versão final N usando o ban
   furAdd:LAYOUTS.N.furAdd.filter(keepPQ).concat(BATHFUR_PQ,[[823,780,55,242,"Armário"],[823,703,225,45,"Armário"],[690,703,25,68,""]]),
   portal:[700,845], entryW:[78,144], win:WIN_PQ,
   marks:LAYOUTS.N.marks.filter(m=>!(m[0]===960)).concat([[735,775,800,775,"porta existente"],[820,705,820,770,""]])};
-let cur="P", sel="bsoc";
+LAYOUTS.S={k:"S",t:"Prévia: closet em U",sub:"Versão final P com closet maior em U entre o quarto e o banheiro existente",
+  changes:[
+    "PRÉVIA sobre a versão final P. O closet cresce ~70 cm para o lado do quarto e ganha mais armário.",
+    "Closet em U (≈8,1 m², 2,8 × 2,9 m) ao lado do banheiro: armário alto na parede do banheiro, na parede do quarto, no fundo e na parede da sala, ~6,7 m de armário no total, com ~1,4 m livre no meio. Na versão P eram ~3,9 m de armário.",
+    "O closet continua entre o quarto e o banheiro: porta do quarto num canto de cima, porta do banheiro no outro.",
+    "A porta do banheiro sai da parede de cima e vai para a parede do closet. É só fechar um vão e abrir outro, sem mexer em água ou esgoto. A posição exata depende de onde estão a pia e o vaso hoje.",
+    "Quarto do casal com ≈11,0 m² (3,8 × 2,9 m): cama queen com criados-mudos, ~0,85 m livre no pé da cama e poltrona no canto. A porta para a sala vai para perto da janela, à direita do rack da TV.",
+    "Sai o corredor do closet junto à parede da sala: esse espaço (≈3,4 m²) volta para a sala, perto do canto de leitura.",
+    "O resto da casa continua como na versão final P."],
+  rooms:Object.assign({},LAYOUTS.P.rooms,{
+    bsoc:Object.assign({},BATH_PQ,{note:"Banheiro que já está construído, na vertical (≈1,6 × 2,9 m), com janela para o vazio. A porta passa da parede de cima para a parede do closet (fechar um vão e abrir outro, sem mexer na hidráulica)."}),
+    lavabo:{hide:false,n:"Closet",p:"820,780 1060,780 1060,1025 820,1025",a:"≈8,1 m²",l:[940,905],chg:true,styleOk:true,
+      note:"Closet em U entre o quarto e o banheiro: armário alto na parede do banheiro, na parede do quarto, no fundo e no trecho da parede da sala entre as portas (~6,7 m de armário), com ~1,4 m livre no meio."},
+    kids:{n:"Quarto do casal",p:"1060,780 1385,780 1385,1025 1060,1025",a:"≈11,0 m²",l:[1238,825],chg:true,styleOk:true,
+      note:"Quarto do casal com a janela da fachada (≈3,8 × 2,9 m). Cama queen na parede do vizinho, poltrona no canto, porta para a sala perto da janela e porta para o closet."},
+    sala:Object.assign({},LAYOUTS.P.rooms.sala,{p:"685,305 1385,305 1385,780 820,780 820,775 685,775",a:"≈55 m²",
+      note:"A sala ganha o antigo corredor do closet (≈3,4 m²) junto ao canto de leitura. Cozinha no centro, jantar na janela e estar com a TV na parede do closet."})}),
+  furDrop:LAYOUTS.P.furDrop, furDropTag:LAYOUTS.P.furDropTag, furDropRect:(LAYOUTS.P.furDropRect||[]).concat([[685,780,1386,1026],[685,700,1060,780]]),
+  furAdd:LAYOUTS.P.furAdd.filter(r=>!(r[0]>=685&&r[1]>=700&&r[1]<1026&&!(r[1]<780&&r[0]>=1060))).concat([
+    [688,885,45,55,"Pia"],[785,880,32,34,""],[688,945,129,3,""],
+    [823,860,55,162,"Arm."],[1002,860,55,162,"Arm."],[878,968,124,54,"Armário"],[880,783,120,55,"Armário"],
+    [1170,853,136,170,"Cama casal"],[1132,990,34,32,""],[1310,990,34,32,""],[1066,962,56,56,"Poltr."]]),
+  portal:[700,845], entryW:[78,144], win:WIN_PQ,
+  marks:LAYOUTS.P.marks.filter(m=>!(m[0]===960||m[0]===735||m[0]===1058)).concat([[1275,780,1330,780,"porta do casal"],[820,790,820,855,""],[1060,790,1060,855,""]])};
+let cur="S", sel="lavabo";
 
 function roomsFor(k){
   const L=LAYOUTS[k], out={};
@@ -1129,7 +1153,7 @@ function drawPlan(){
 function render(){
   // tabs
   const tabs=document.getElementById("tabs"); tabs.innerHTML="";
-  for(const k of ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q"]){
+  for(const k of ["A","B","C","D","E","F","G","H","I","J","K","L","M","N","O","P","Q","S"]){
     const L=LAYOUTS[k],b=document.createElement("button");
     b.className="tab";b.id="tab-"+k;b.setAttribute("role","tab");b.setAttribute("aria-selected",k===cur);
     b.innerHTML=`<span class="k">${k}</span>${L.t}`;

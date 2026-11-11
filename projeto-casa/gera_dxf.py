@@ -73,6 +73,8 @@ DOORS = [
     (960, 800, 960, 870, (-1, 0), "giro"),       # quarto do casal → closet
     (735, 775, 800, 775, (0, 1), "giro"),        # closet → banho do casal (porta existente)
 ]
+if "door_spec" in d:
+    DOORS = [tuple(x[:4]) + (tuple(x[4]) if x[4] else None, x[5]) for x in d["door_spec"]]
 for x1, y1, x2, y2, sw, kind in DOORS:
     (ax, ay), (bx, by) = P(x1, y1), P(x2, y2)
     w = math.hypot(bx - ax, by - ay)
@@ -164,7 +166,7 @@ dim(P(186, 312), P(685, 312), (0, P(0, 312)[1] + 350))
 
 # carimbo
 bx0, by0 = P(1450, 1180)
-lines = ["NOSSA CASA - PLANTA DE LAYOUT", "VERSÃO FINAL (P) - HALL EM L E BANHEIRO EXISTENTE", "ESCALA SUGERIDA 1:50  |  UNIDADE: MILÍMETROS",
+lines = ["NOSSA CASA - PLANTA DE LAYOUT", d.get("versao", "VERSÃO FINAL (P) - HALL EM L E BANHEIRO EXISTENTE"), "ESCALA SUGERIDA 1:50  |  UNIDADE: MILÍMETROS",
          "Medidas aproximadas, tiradas do croqui enviado.", "Conferir em obra e com o arquiteto antes de executar."]
 for i, txt in enumerate(lines):
     msp.add_text(txt, height=160 if i == 0 else 110, dxfattribs={"layer": "ARQ-CARIMBO"}).set_placement((bx0 - 9000, by0 - i * 230))
